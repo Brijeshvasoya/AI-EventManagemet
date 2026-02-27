@@ -48,10 +48,14 @@ export default function ChatInput({
           <button
             onClick={onSend}
             disabled={disabled || isLoading || !inputValue.trim()}
-            className="px-5 py-3 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white rounded-xl hover:from-indigo-700 hover:via-purple-700 hover:to-pink-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center min-w-[48px] h-[48px]"
+            className="px-4 py-3 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white rounded-xl hover:from-indigo-700 hover:via-purple-700 hover:to-pink-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center"
+            style={{
+              height: '48px',
+              minHeight: '48px',
+              maxHeight: '120px',
+            }}
           >
             <Send className="w-5 h-5" />
-            <span className="font-medium">Send</span>
           </button>
         </div>
         <p className="mt-4 text-center text-xs text-gray-500">

@@ -173,7 +173,7 @@ export default function ChatPage() {
       {/* Messages */}
       <div ref={messagesContainerRef} className="flex-1 overflow-y-auto px-6 py-6 relative">
         <div className="max-w-4xl mx-auto">
-          {messages.length === 0 && (
+          {messages?.length === 0 && (
             <div className="text-center py-12">
               <div className="w-20 h-20 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg">
                 <Bot className="w-10 h-10 text-white" />
@@ -200,9 +200,9 @@ export default function ChatPage() {
             </div>
           )}
 
-          {messages.length > 0 && (
+          {messages?.length > 0 && (
             <div className="space-y-6">
-              {messages.map((message) => (
+              {messages?.map((message) => (
                 <div key={message.id} className={`flex gap-4 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                   {message.role === 'assistant' && (
                     <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
