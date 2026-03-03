@@ -43,71 +43,48 @@ export const venueManagementTool = createTool({
   },
 });
 
-function generateVenues(eventType: string, guestCount: number, budget: number, location: string) {
-  const venueTypes: Record<string, string[]> = {
-    wedding: ['Ballroom', 'Garden', 'Beach Resort', 'Historic Mansion', 'Hotel'],
-    corporate: ['Conference Center', 'Hotel Meeting Room', 'Rooftop Venue', 'Convention Center'],
-    birthday: ['Restaurant Private Room', 'Community Hall', 'Rooftop Bar', 'Event Space'],
-    conference: ['Convention Center', 'Hotel Conference Room', 'University Hall', 'Business Center'],
-  };
-
-  const baseVenues = [
-    {
-      name: `${location} Grand Ballroom`,
-      type: venueTypes[eventType]?.[0] || 'Event Space',
-      capacity: Math.ceil(guestCount * 1.5),
-      price: Math.round(budget * 0.4),
-      features: ['Parking', 'AV Equipment', 'Catering Kitchen', 'Dance Floor', 'Bar Service'],
-      contact: 'events@grandballroom.com',
-      rating: 4.5,
-      availability: 'Available',
-    },
-    {
-      name: `${location} Garden Pavilion`,
-      type: venueTypes[eventType]?.[1] || 'Outdoor Venue',
-      capacity: Math.ceil(guestCount * 1.3),
-      price: Math.round(budget * 0.3),
-      features: ['Outdoor Space', 'Garden Setting', 'Tent Coverage', 'Scenic Views', 'Parking'],
-      contact: 'info@gardenpavilion.com',
-      rating: 4.7,
-      availability: 'Available',
-    },
-    {
-      name: `${location} Modern Conference Center`,
-      type: venueTypes[eventType]?.[2] || 'Modern Venue',
-      capacity: Math.ceil(guestCount * 1.2),
-      price: Math.round(budget * 0.5),
-      features: ['Modern AV', 'High-Speed WiFi', 'Multiple Rooms', 'Catering Services', 'Tech Support'],
-      contact: 'bookings@conferencecenter.com',
-      rating: 4.3,
-      availability: 'Limited',
-    },
-    {
-      name: `${location} Historic Estate`,
-      type: venueTypes[eventType]?.[3] || 'Unique Venue',
-      capacity: Math.ceil(guestCount * 1.1),
-      price: Math.round(budget * 0.6),
-      features: ['Historic Charm', 'Photo Opportunities', 'Gardens', 'Parking', 'Event Coordinator'],
-      contact: 'events@historicestate.com',
-      rating: 4.8,
-      availability: 'Available',
-    },
-    {
-      name: `${location} Riverside Hotel`,
-      type: venueTypes[eventType]?.[4] || 'Hotel Venue',
-      capacity: Math.ceil(guestCount * 1.4),
-      price: Math.round(budget * 0.35),
-      features: ['Hotel Rooms', 'Restaurant', 'Meeting Rooms', 'Parking', 'Shuttle Service'],
-      contact: 'events@riversidehotel.com',
-      rating: 4.2,
-      availability: 'Available',
-    },
-  ];
-
-  // Filter venues that can accommodate guest count and are within budget
-  return baseVenues.filter(venue => 
-    venue.capacity >= guestCount && venue.price <= budget
+async function generateVenues(eventType: string, guestCount: number, budget: number, location: string) {
+  const geoRes = await fetch(
+    `https://nominatim.openstreetmap.org/search?format=json&q=${location}`
   );
+  const geoData = await geoRes.json();
+
+  if (!geoData.length) return [];
+
+  const lat = geoData[0].lat;
+  const lon = geoData[0].lon;
+
+  // 2️⃣ Overpass API query (Free)
+  const query = `
+    [out:json];
+    (
+      node["amenity"="events_venue"](around:5000,${lat},${lon});
+      node["amenity"="community_centre"](around:5000,${lat},${lon});
+      node["tourism"="hotel"](around:5000,${lat},${lon});
+    );
+    out;
+  `;
+
+  const overpassRes = await fetch(
+    "https://overpass-api.de/api/interpreter",
+    {
+      method: "POST",
+      body: query,
+    }
+  );
+
+  const data = await overpassRes.json();
+
+  return data.elements.slice(0, 6).map((place: any) => ({
+    name: place.tags.name || "Unnamed Venue",
+    type: eventType + " Venue",
+    capacity: 50 + Math.floor(Math.random() * 200),
+    price: 20000 + Math.floor(Math.random() * 80000),
+    features: Object.keys(place.tags),
+    contact: place.tags.phone || "Not Available",
+    rating: 3.5 + Math.random() * 1.5,
+    availability: "Contact Venue",
+  }));
 }
 
 function generateVenueRecommendations(eventType: string, guestCount: number, budget: number) {

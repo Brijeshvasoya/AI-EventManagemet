@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation'
 import { Bot, User, ChevronUp, ChevronDown } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import rehypeRaw from 'rehype-raw'
 import ChatInput from '@/components/ChatInput'
 
 const markdownComponents = {
@@ -31,34 +32,45 @@ const markdownComponents = {
   ),
   hr: () => <hr className="border-gray-200 my-3" />,
   table: ({ children }) => (
-    <div className="overflow-x-auto my-4">
-      <table className="min-w-full border-collapse border border-gray-300 rounded-lg overflow-hidden">
+    <div className="overflow-x-auto my-6 rounded-2xl border border-gray-200 shadow-sm">
+      <table className="min-w-full border-collapse text-sm">
         {children}
       </table>
     </div>
   ),
+
   thead: ({ children }) => (
-    <thead className="bg-gray-50 border-b border-gray-300">
+    <thead className="bg-gradient-to-r from-indigo-100 to-purple-100 sticky top-0 z-10">
       {children}
     </thead>
   ),
+
   tbody: ({ children }) => (
-    <tbody className="divide-y divide-gray-200">
+    <tbody className="
+    bg-gradient-to-r from-indigo-50/30 to-purple-50/30
+    divide-y divide-gray-200
+    [&>tr:nth-child(even)]:bg-gradient-to-r
+    [&>tr:nth-child(even)]:from-indigo-50/60
+    [&>tr:nth-child(even)]:to-purple-50/60
+  ">
       {children}
     </tbody>
   ),
+
   tr: ({ children }) => (
-    <tr className="hover:bg-gray-50 transition-colors">
+    <tr className="hover:bg-indigo-50/50 transition-colors duration-200">
       {children}
     </tr>
   ),
+
   th: ({ children }) => (
-    <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b border-gray-300">
+    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
       {children}
     </th>
   ),
+
   td: ({ children }) => (
-    <td className="px-4 py-3 text-sm text-gray-900 border-b border-gray-100">
+    <td className="px-6 py-4 text-sm text-gray-700">
       {children}
     </td>
   ),
@@ -217,13 +229,13 @@ export default function SpecificChatPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col bg-gradient-to-b from-white via-gray-50 to-blue-50 h-full relative">
+    <div className="flex flex-1 flex-col bg-gradient-to-b from-white via-gray-50 to-blue-50 h-full relative shadow-2xl glass">
 
       {/* SCROLL BUTTON */}
       {scrollDirection && (
         <button
           onClick={scrollDirection === 'up' ? scrollToTop : scrollToBottom}
-          className="absolute bottom-40 right-10 z-20 w-11 h-11 bg-white border border-gray-200 rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-all hover:scale-110"
+          className="absolute bottom-45 right-10 z-20 w-11 h-11 bg-white border border-gray-200 rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-all hover:scale-110"
         >
           {scrollDirection === 'up' ? (
             <ChevronUp className="w-5 h-5 text-gray-600" />
@@ -236,7 +248,7 @@ export default function SpecificChatPage() {
       {/* MESSAGES */}
       <div
         ref={messagesContainerRef}
-        className="flex-1 overflow-y-auto px-6 py-6 h-0"
+        className="flex-1 overflow-y-auto px-6 py-6 h-0 scrollbar-hide"
       >
         <div className="max-w-4xl mx-auto space-y-6">
 
@@ -266,6 +278,7 @@ export default function SpecificChatPage() {
                   <div className="text-sm">
                     <ReactMarkdown
                       remarkPlugins={[remarkGfm]}
+                      rehypePlugins={[rehypeRaw]}
                       components={markdownComponents}
                     >
                       {getMessageText(message)}
@@ -283,9 +296,9 @@ export default function SpecificChatPage() {
           ))}
           {isLoading && (
             <div className="flex gap-4 justify-start mt-6">
-              <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
+              {/* <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
                 <Bot className="w-5 h-5 text-white" />
-              </div>
+              </div> */}
               <div className="bg-white border border-gray-200 px-5 py-4 rounded-2xl shadow-sm">
                 <div className="flex space-x-2">
                   <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />

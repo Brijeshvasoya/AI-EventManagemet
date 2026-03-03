@@ -20,7 +20,7 @@ export default function ChatInput({
   }
 
   return (
-    <div className="bg-gradient-to-r from-white via-gray-50 to-blue-50 border-t border-gray-200 px-6 py-6 sticky bottom-0 z-10 backdrop-blur-sm">
+    <div className="glass border-t border-white/20 px-6 py-6 sticky bottom-0 z-10 backdrop-blur-sm">
       <div className="max-w-4xl mx-auto">
         <div className="flex gap-3">
           <div className="flex-1 relative">
@@ -30,8 +30,8 @@ export default function ChatInput({
               onKeyDown={handleKeyDown}
               placeholder={placeholder}
               disabled={disabled || isLoading}
-              rows={1}
-              className="w-full px-4 py-3 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-transparent resize-none text-gray-900 placeholder-gray-400 transition-all duration-300 shadow-sm hover:shadow-md"
+              rows={2}
+              className="w-full px-4 py-3 glass border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent resize-none text-gray-900 placeholder-gray-400 transition-all duration-300 shadow-sm hover:shadow-md overflow-hidden"
               style={{
                 minHeight: '48px',
                 maxHeight: '120px',
@@ -48,11 +48,9 @@ export default function ChatInput({
           <button
             onClick={onSend}
             disabled={disabled || isLoading || !inputValue.trim()}
-            className="px-4 py-3 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white rounded-xl hover:from-indigo-700 hover:via-purple-700 hover:to-pink-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center"
+            className="px-4 py-3 gradient-primary text-white rounded-xl hover:opacity-90 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center"
             style={{
               height: '48px',
-              minHeight: '48px',
-              maxHeight: '120px',
             }}
           >
             <Send className="w-5 h-5" />

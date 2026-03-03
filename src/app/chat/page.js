@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { Bot, User, Calendar, Users, MapPin, Clock, DollarSign, Send } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import rehypeRaw from 'rehype-raw'
 import ChatInput from '@/components/ChatInput'
 
 const markdownComponents = {
@@ -32,37 +33,42 @@ const markdownComponents = {
   ),
   hr: () => <hr className="border-gray-200 my-3" />,
   table: ({ children }) => (
-    <div className="overflow-x-auto my-4">
-      <table className="min-w-full border-collapse border border-gray-300 rounded-lg overflow-hidden">
-        {children}
-      </table>
-    </div>
-  ),
-  thead: ({ children }) => (
-    <thead className="bg-gray-50 border-b border-gray-300">
+  <div className="overflow-x-auto my-6 rounded-2xl border border-gray-200 shadow-sm">
+    <table className="min-w-full border-collapse text-sm">
       {children}
-    </thead>
-  ),
-  tbody: ({ children }) => (
-    <tbody className="divide-y divide-gray-200">
-      {children}
-    </tbody>
-  ),
-  tr: ({ children }) => (
-    <tr className="hover:bg-gray-50 transition-colors">
-      {children}
-    </tr>
-  ),
-  th: ({ children }) => (
-    <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b border-gray-300">
-      {children}
-    </th>
-  ),
-  td: ({ children }) => (
-    <td className="px-4 py-3 text-sm text-gray-900 border-b border-gray-100">
-      {children}
-    </td>
-  ),
+    </table>
+  </div>
+),
+
+thead: ({ children }) => (
+  <thead className="bg-gradient-to-r from-indigo-50 to-purple-50 sticky top-0 z-10">
+    {children}
+  </thead>
+),
+
+tbody: ({ children }) => (
+  <tbody className="divide-y divide-gray-100 bg-white">
+    {children}
+  </tbody>
+),
+
+tr: ({ children }) => (
+  <tr className="hover:bg-indigo-50/50 transition-colors duration-200">
+    {children}
+  </tr>
+),
+
+th: ({ children }) => (
+  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+    {children}
+  </th>
+),
+
+td: ({ children }) => (
+  <td className="px-6 py-4 text-sm text-gray-700">
+    {children}
+  </td>
+),
 }
 
 // Extract plain text from a UIMessage part
@@ -175,10 +181,10 @@ export default function ChatPage() {
         <div className="max-w-4xl mx-auto">
           {messages?.length === 0 && (
             <div className="text-center py-12">
-              <div className="w-20 h-20 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+              <div className="w-20 h-20 gradient-primary rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg">
                 <Bot className="w-10 h-10 text-white" />
               </div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Welcome to AI Event Manager</h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-4 gradient-text">Welcome to AI Event Manager</h2>
               <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
                 Start planning your perfect event with AI-powered assistance. From corporate meetings to weddings, I&apos;m here to help every step of the way.
               </p>
@@ -188,10 +194,10 @@ export default function ChatPage() {
                   <button
                     key={index}
                     onClick={() => setInputValue(suggestion.text)}
-                    className="flex items-center gap-2 px-4 py-3 bg-white border border-gray-200 rounded-xl hover:border-indigo-300 hover:shadow-md transition-all group"
+                    className="flex items-center gap-2 px-4 py-3 glass-card border border-white/20 rounded-xl hover:border-purple-300 hover:shadow-md transition-all group"
                   >
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${suggestion.color} group-hover:scale-110 transition-transform`}>
-                      <suggestion.icon className="w-4 h-4" />
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center glass group-hover:gradient-primary transition-all`}>
+                      <suggestion.icon className="w-4 h-4 text-gray-600 group-hover:text-gray-900" />
                     </div>
                     <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900">{suggestion.text}</span>
                   </button>
@@ -205,27 +211,27 @@ export default function ChatPage() {
               {messages?.map((message) => (
                 <div key={message.id} className={`flex gap-4 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                   {message.role === 'assistant' && (
-                    <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                    <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
                       <Bot className="w-5 h-5 text-white" />
                     </div>
                   )}
                   <div className={`max-w-3xl px-5 py-4 rounded-2xl ${message.role === 'user'
-                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg'
-                      : 'bg-white border border-gray-200 text-gray-900 shadow-sm'
+                      ? 'gradient-primary text-white shadow-lg'
+                      : 'glass-card border border-white/20 text-gray-900 shadow-sm'
                     }`}>
                     {message.role === 'user' ? (
                       <p className="text-sm leading-relaxed whitespace-pre-wrap">{getMessageText(message)}</p>
                     ) : (
                       <div className="text-sm">
-                        <ReactMarkdown components={markdownComponents} remarkPlugins={[remarkGfm]}>
+                        <ReactMarkdown components={markdownComponents} remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
                           {getMessageText(message)}
                         </ReactMarkdown>
                       </div>
                     )}
                   </div>
                   {message.role === 'user' && (
-                    <div className="w-10 h-10 bg-gray-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
-                      <User className="w-5 h-5 text-white" />
+                    <div className="w-10 h-10 glass-card rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                      <User className="w-5 h-5 text-gray-700" />
                     </div>
                   )}
                 </div>
@@ -236,10 +242,7 @@ export default function ChatPage() {
 
           {isLoading && (
             <div className="flex gap-4 justify-start mt-6">
-              <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
-                <Bot className="w-5 h-5 text-white" />
-              </div>
-              <div className="bg-white border border-gray-200 px-5 py-4 rounded-2xl shadow-sm">
+              <div className="glass-card border border-white/20 px-5 py-4 rounded-2xl shadow-sm">
                 <div className="flex space-x-2">
                   <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
                   <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
@@ -250,7 +253,7 @@ export default function ChatPage() {
           )}
 
           {error && (
-            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">
+            <div className="mt-4 p-4 glass-card border border-red-200 rounded-xl text-red-600 text-sm">
               Something went wrong: {error.message}
             </div>
           )}
@@ -263,7 +266,7 @@ export default function ChatPage() {
         setInputValue={setInputValue}
         onSend={handleSend}
         isLoading={isLoading}
-        placeholder="Ask about event planning, venue selection, guest management..."
+        placeholder="Continue your conversation about event management..."
         showBotIcon={false}
       />
     </div>
