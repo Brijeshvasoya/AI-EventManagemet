@@ -81,11 +81,11 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-150 via-white to-purple-50 flex items-center justify-center p-4 shadow-2xl">
       <div className="w-full max-w-6xl flex items-center justify-center gap-12">
         {/* Left side - Features */}
         <div className="hidden lg:block flex-1">
-          <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl">
+          <div className="bg-gradient-r from-indigo-50 to-purple-20 backdrop-blur-sm rounded-3xl p-8 shadow-2xl shadow-indigo-100">
             <h1 className="text-4xl font-bold text-gray-900 mb-6">
               Join AI Event Management
             </h1>
@@ -129,7 +129,7 @@ export default function SignupPage() {
 
         {/* Right side - Signup Form */}
         <div className="w-full max-w-md">
-          <div className="bg-white rounded-3xl shadow-2xl p-8">
+          <div className="bg-gradient-r from-indigo-50 to-purple-20 backdrop-blur-sm rounded-3xl p-8 shadow-2xl shadow-indigo-100">
             <div className="text-center mb-8">
               <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <User className="w-8 h-8 text-white" />
