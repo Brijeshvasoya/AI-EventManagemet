@@ -214,7 +214,7 @@ export default function Sidebar() {
                       >
                         <div className="flex items-start gap-3 pr-8">
                           <div
-                            className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
+                            className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all duration-200 ${
                               pathname === `/chat/${chat?.id}`
                                 ? 'gradient-primary shadow-lg'
                                 : 'bg-white/30 group-hover:gradient-primary'
@@ -262,7 +262,7 @@ export default function Sidebar() {
                       >
                         <div className="flex items-start gap-3 pr-8">
                           <div
-                            className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
+                            className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all duration-200 ${
                               pathname === `/chat/${chat?.id}`
                                 ? 'gradient-primary shadow-lg'
                                 : 'bg-white/30 group-hover:gradient-primary'
@@ -310,7 +310,7 @@ export default function Sidebar() {
                       >
                         <div className="flex items-start gap-3 pr-8">
                           <div
-                            className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
+                            className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all duration-200 ${
                               pathname === `/chat/${chat?.id}`
                                 ? 'gradient-primary shadow-lg'
                                 : 'bg-white/30 group-hover:gradient-primary'
@@ -358,7 +358,7 @@ export default function Sidebar() {
                       >
                         <div className="flex items-start gap-3 pr-8">
                           <div
-                            className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
+                            className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all duration-200 ${
                               pathname === `/chat/${chat?.id}`
                                 ? 'gradient-primary shadow-lg'
                                 : 'bg-white/30 group-hover:gradient-primary'
@@ -406,7 +406,7 @@ export default function Sidebar() {
                       >
                         <div className="flex items-start gap-3 pr-8">
                           <div
-                            className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
+                            className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all duration-200 ${
                               pathname === `/chat/${chat?.id}`
                                 ? 'gradient-primary shadow-lg'
                                 : 'bg-white/30 group-hover:gradient-primary'
@@ -449,8 +449,8 @@ export default function Sidebar() {
 
       {/* Delete Confirmation Alert - Fixed Position */}
       {deleteConfirmChat && (
-        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-[9999] backdrop-blur-sm">
-          <div className="glass-card rounded-xl shadow-2xl p-6 max-w-sm w-full mx-4 transform transition-all relative z-[10000]">
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-9999 backdrop-blur-sm">
+          <div className="glass-card rounded-xl shadow-2xl p-6 max-w-sm w-full mx-4 transform transition-all relative z-10000">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center">
                 <Trash2 className="w-5 h-5 text-red-600" />

@@ -32,10 +32,8 @@ import { createHighlighter } from "shiki";
 
 // Shiki uses bitflags for font styles: 1=italic, 2=bold, 4=underline
 // biome-ignore lint/suspicious/noBitwiseOperators: shiki bitflag check
-// eslint-disable-next-line no-bitwise -- shiki bitflag check
 const isItalic = (fontStyle: number | undefined) => fontStyle && fontStyle & 1;
 // biome-ignore lint/suspicious/noBitwiseOperators: shiki bitflag check
-// eslint-disable-next-line no-bitwise -- shiki bitflag check
 // oxlint-disable-next-line eslint(no-bitwise)
 const isBold = (fontStyle: number | undefined) => fontStyle && fontStyle & 2;
 const isUnderline = (fontStyle: number | undefined) =>
@@ -65,7 +63,7 @@ const addKeysToTokens = (lines: ThemedToken[][]): KeyedLine[] =>
 // Token rendering component
 const TokenSpan = ({ token }: { token: ThemedToken }) => (
   <span
-    className="dark:!bg-[var(--shiki-dark-bg)] dark:!text-[var(--shiki-dark)]"
+    className="dark:bg-(--shiki-dark-bg) dark:text-(--shiki-dark)"
     style={
       {
         backgroundColor: token.bgColor,
@@ -276,7 +274,7 @@ const CodeBlockBody = memo(
     return (
       <pre
         className={cn(
-          "dark:!bg-[var(--shiki-dark-bg)] dark:!text-[var(--shiki-dark)] m-0 p-4 text-sm",
+          "dark:bg-(--shiki-dark-bg) dark:text-(--shiki-dark) m-0 p-4 text-sm",
           className
         )}
         style={preStyle}
@@ -397,6 +395,7 @@ export const CodeBlockContent = ({
     let cancelled = false;
 
     // Reset to raw tokens when code changes (shows current code, not stale tokens)
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTokenized(highlightCode(code, language) ?? rawTokens);
 
     // Subscribe to async highlighting result
