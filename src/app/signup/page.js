@@ -74,6 +74,7 @@ export default function SignupPage() {
       
       router.push('/chat')
     } catch (err) {
+      console.log("🚀 ~ handleSubmit ~ err:", err)
       setError('Registration failed. Please try again.')
     } finally {
       setIsLoading(false)
@@ -81,7 +82,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-150 via-white to-purple-50 flex items-center justify-center p-4 shadow-2xl">
+    <div className="min-h-screen bg-linear-to-br from-indigo-150 via-white to-purple-50 flex items-center justify-center p-4 shadow-2xl">
       <div className="w-full max-w-6xl flex items-center justify-center gap-12">
         {/* Left side - Features */}
         <div className="hidden lg:block flex-1">
@@ -95,7 +96,7 @@ export default function SignupPage() {
             
             <div className="space-y-6">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center shrink-0">
                   <Calendar className="w-6 h-6 text-indigo-600" />
                 </div>
                 <div>
@@ -105,7 +106,7 @@ export default function SignupPage() {
               </div>
               
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center shrink-0">
                   <Users className="w-6 h-6 text-purple-600" />
                 </div>
                 <div>
@@ -115,7 +116,7 @@ export default function SignupPage() {
               </div>
               
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-pink-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 bg-pink-100 rounded-xl flex items-center justify-center shrink-0">
                   <MapPin className="w-6 h-6 text-pink-600" />
                 </div>
                 <div>
@@ -131,7 +132,7 @@ export default function SignupPage() {
         <div className="w-full max-w-md">
           <div className="bg-gradient-r from-indigo-50 to-purple-20 backdrop-blur-sm rounded-3xl p-8 shadow-2xl shadow-indigo-100">
             <div className="text-center mb-8">
-              <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-linear-to-r from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <User className="w-8 h-8 text-white" />
               </div>
               <h2 className="text-3xl font-bold text-gray-900 mb-2">
@@ -238,7 +239,7 @@ export default function SignupPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-3 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-[1.02]"
+                className="w-full py-3 px-4 bg-linear-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-[1.02]"
               >
                 {isLoading ? 'Creating Account...' : 'Sign Up'}
               </button>

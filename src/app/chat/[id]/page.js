@@ -40,16 +40,16 @@ const markdownComponents = {
   ),
 
   thead: ({ children }) => (
-    <thead className="bg-gradient-to-r from-indigo-100 to-purple-100 sticky top-0 z-10">
+    <thead className="bg-linear-to-r from-indigo-100 to-purple-100 sticky top-0 z-10">
       {children}
     </thead>
   ),
 
   tbody: ({ children }) => (
     <tbody className="
-    bg-gradient-to-r from-indigo-50/30 to-purple-50/30
+    bg-linear-to-r from-indigo-50/30 to-purple-50/30
     divide-y divide-gray-200
-    [&>tr:nth-child(even)]:bg-gradient-to-r
+    [&>tr:nth-child(even)]:bg-linear-to-r
     [&>tr:nth-child(even)]:from-indigo-50/60
     [&>tr:nth-child(even)]:to-purple-50/60
   ">
@@ -207,7 +207,7 @@ export default function SpecificChatPage() {
       if (stored) {
         const parsed = JSON.parse(stored)
 
-        const uiMessages = parsed.map((m) => ({
+        const uiMessages = parsed?.map((m) => ({
           id: m.id,
           role: m.role,
           parts: [{ type: 'text', text: m.text }],
@@ -229,7 +229,7 @@ export default function SpecificChatPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col bg-gradient-to-b from-white via-gray-50 to-blue-50 h-full relative shadow-2xl glass">
+    <div className="flex flex-1 flex-col bg-linear-to-b from-white via-gray-50 to-blue-50 h-full relative shadow-2xl glass">
 
       {/* SCROLL BUTTON */}
       {scrollDirection && (
@@ -259,14 +259,14 @@ export default function SpecificChatPage() {
                 }`}
             >
               {message.role === 'assistant' && (
-                <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                <div className="w-10 h-10 bg-linear-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shrink-0 shadow-lg">
                   <Bot className="w-5 h-5 text-white" />
                 </div>
               )}
 
               <div
                 className={`max-w-3xl px-5 py-4 rounded-2xl ${message.role === 'user'
-                  ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg'
+                  ? 'bg-linear-to-r from-indigo-600 to-purple-600 text-white shadow-lg'
                   : 'bg-white border border-gray-200 text-gray-900 shadow-sm'
                   }`}
               >
@@ -288,7 +288,7 @@ export default function SpecificChatPage() {
               </div>
 
               {message.role === 'user' && (
-                <div className="w-10 h-10 bg-gray-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                <div className="w-10 h-10 bg-gray-600 rounded-xl flex items-center justify-center shrink-0 shadow-lg">
                   <User className="w-5 h-5 text-white" />
                 </div>
               )}
@@ -296,7 +296,7 @@ export default function SpecificChatPage() {
           ))}
           {isLoading && (
             <div className="flex gap-4 justify-start mt-6">
-              {/* <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
+              {/* <div className="w-10 h-10 bg-linear-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
                 <Bot className="w-5 h-5 text-white" />
               </div> */}
               <div className="bg-white border border-gray-200 px-5 py-4 rounded-2xl shadow-sm">

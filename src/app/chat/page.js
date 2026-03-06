@@ -41,7 +41,7 @@ const markdownComponents = {
 ),
 
 thead: ({ children }) => (
-  <thead className="bg-gradient-to-r from-indigo-50 to-purple-50 sticky top-0 z-10">
+  <thead className="bg-linear-to-r from-indigo-50 to-purple-50 sticky top-0 z-10">
     {children}
   </thead>
 ),
@@ -175,7 +175,7 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="flex-1 flex min-h-screen flex-col bg-gradient-to-b from-white via-gray-50 to-blue-50">
+    <div className="flex-1 flex min-h-screen flex-col bg-linear-to-b from-white via-gray-50 to-blue-50">
       {/* Messages */}
       <div ref={messagesContainerRef} className="flex-1 overflow-y-auto px-6 py-6 relative">
         <div className="max-w-4xl mx-auto">
@@ -211,7 +211,7 @@ export default function ChatPage() {
               {messages?.map((message) => (
                 <div key={message.id} className={`flex gap-4 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                   {message.role === 'assistant' && (
-                    <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                    <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center shrink-0 shadow-lg">
                       <Bot className="w-5 h-5 text-white" />
                     </div>
                   )}
@@ -230,7 +230,7 @@ export default function ChatPage() {
                     )}
                   </div>
                   {message.role === 'user' && (
-                    <div className="w-10 h-10 glass-card rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                    <div className="w-10 h-10 glass-card rounded-xl flex items-center justify-center shrink-0 shadow-lg">
                       <User className="w-5 h-5 text-gray-700" />
                     </div>
                   )}
@@ -267,7 +267,6 @@ export default function ChatPage() {
         onSend={handleSend}
         isLoading={isLoading}
         placeholder="Continue your conversation about event management..."
-        showBotIcon={false}
       />
     </div>
   )

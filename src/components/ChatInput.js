@@ -1,17 +1,26 @@
 'use client'
 
 import { Send, Bot, Sparkles } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
-export default function ChatInput({ 
+export default function ChatInput({
   inputValue,
   setInputValue,
   onSend,
   isLoading,
   placeholder = "Type your message...",
   disabled = false,
-  showBotIcon = true,
   chatId = null
 }) {
+  const [showBotIcon, setShowBotIcon] = useState(false)
+
+  useEffect(() => {
+    if (!inputValue?.length > 0) {
+      setShowBotIcon(true)
+    } else {
+      setShowBotIcon(false)
+    }
+  }, [inputValue])
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
@@ -37,12 +46,8 @@ export default function ChatInput({
                 maxHeight: '120px',
               }}
             />
-            <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-              {showBotIcon ? (
-                <Bot className="w-5 h-5 text-gray-400" />
-              ) : (
-                <Sparkles className="w-5 h-5 text-gray-400" />
-              )}
+            <div className="absolute right-4 top-1/2 transform -translate-y-1/2" style={{ opacity: !showBotIcon ? 1 : 0 }}>
+              <Sparkles className="w-5 h-5 text-gray-600" />
             </div>
           </div>
           <button
