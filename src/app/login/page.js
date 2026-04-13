@@ -3,175 +3,228 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Eye, EyeOff, Mail, Lock, Calendar, Users, MapPin } from 'lucide-react'
+import { useMutation } from '@apollo/client/react'
+import { LOGIN_MUTATION } from '../../graphql/client'
+import { Eye, EyeOff, Mail, Lock, Zap, Calendar, Users, MapPin, ArrowRight, Star } from 'lucide-react'
+
+const features = [
+  { icon: Calendar, label: 'Smart Scheduling', desc: 'AI plans your timeline instantly', color: '#8b5cf6', glow: 'rgba(139,92,246,0.3)' },
+  { icon: Users, label: 'Guest Automation', desc: 'RSVPs & lists managed automatically', color: '#06b6d4', glow: 'rgba(6,182,212,0.3)' },
+  { icon: MapPin, label: 'Venue Intelligence', desc: 'Smart venue matching & coordination', color: '#ec4899', glow: 'rgba(236,72,153,0.3)' },
+]
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [show, setShow] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [focused, setFocused] = useState('')
   const router = useRouter()
+  const [login] = useMutation(LOGIN_MUTATION)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setIsLoading(true)
-    setError('')
-    
+    setLoading(true); setError('')
     try {
-      // Get users from localStorage
-      const users = JSON.parse(localStorage.getItem('users') || '[]')
-      const user = users.find(u => u.email === email && u.password === password)
-      
-      if (user) {
-        // Set authentication state
-        localStorage.setItem('isAuthenticated', 'true')
-        localStorage.setItem('currentUser', JSON.stringify({
-          id: user.id,
-          name: user.name,
-          email: user.email
-        }))
-        router.push('/chat')
-      } else {
-        setError('Invalid email or password')
-      }
-    } catch (err) {
-      console.log("🚀 ~ handleSubmit ~ err:", err)
-      setError('Login failed. Please try again.')
-    } finally {
-      setIsLoading(false)
-    }
+      const { data } = await login({ variables: { email, password } })
+      const u = data.login
+      localStorage.setItem('isAuthenticated', 'true')
+      localStorage.setItem('currentUser', JSON.stringify({ id: u.id, name: u.name, email: u.email }))
+      router.push('/chat')
+    } catch {
+      setError('Invalid email or password. Please check your credentials.')
+    } finally { setLoading(false) }
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-indigo-150 via-white to-purple-50 flex items-center justify-center p-4 shadow-2xl">
-      <div className="w-full max-w-6xl flex items-center justify-center gap-12">
-        {/* Left side - Features */}
-        <div className="hidden lg:block flex-1">
-          <div className="bg-gradient-r from-indigo-50 to-purple-20 backdrop-blur-sm rounded-3xl p-8 shadow-2xl shadow-indigo-100">
-            <h1 className="text-4xl font-bold text-gray-900 mb-6">
-              AI Event Management
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden" style={{ zIndex: 1 }}>
+
+      {/* ── Decorative orbs ─────────────────────────── */}
+      <div className="orb" style={{ width: 600, height: 600, top: '-20%', left: '-15%', background: 'radial-gradient(circle, rgba(109,40,217,0.5) 0%, transparent 70%)', animationDelay: '0s' }} />
+      <div className="orb" style={{ width: 400, height: 400, bottom: '-10%', right: '-10%', background: 'radial-gradient(circle, rgba(67,56,202,0.45) 0%, transparent 70%)', animationDelay: '-4s' }} />
+      <div className="orb" style={{ width: 250, height: 250, top: '50%', left: '45%', background: 'radial-gradient(circle, rgba(6,182,212,0.25) 0%, transparent 70%)', animationDelay: '-8s', opacity: 0.6 }} />
+
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-6 lg:px-8 py-10 flex items-center gap-12 lg:gap-20">
+
+        {/* ══ LEFT PANEL ══════════════════════════════ */}
+        <div className="hidden lg:flex flex-col flex-1 gap-8">
+
+          {/* Brand */}
+          <div className="animate-fade-up delay-0 flex items-center gap-3">
+            <div className="relative w-12 h-12">
+              <div className="absolute inset-0 rounded-2xl gradient-primary glow-violet animate-float" />
+              <div className="relative w-12 h-12 rounded-2xl gradient-primary flex items-center justify-center">
+                <Zap className="w-6 h-6 text-white" strokeWidth={2.5} />
+              </div>
+            </div>
+            <div>
+              <p className="text-xl font-bold text-white" style={{ fontFamily: 'Syne, sans-serif' }}>Event <span className="gradient-text">AI</span></p>
+              <p className="text-xs text-gray-500 -mt-0.5">Management Platform</p>
+            </div>
+          </div>
+
+          {/* Headline */}
+          <div className="animate-fade-up delay-1">
+            <div className="badge mb-4">
+              <Star className="w-3 h-3" />
+              Trusted by 10,000+ event planners
+            </div>
+            <h1 className="text-5xl xl:text-6xl font-black leading-[1.08] tracking-tight" style={{ fontFamily: 'Syne, sans-serif' }}>
+              <span className="text-white">Plan events</span><br />
+              <span className="shimmer-text">smarter</span>
+              <span className="text-white">, faster</span>
             </h1>
-            <p className="text-xl text-gray-600 mb-8">
-              Plan, manage, and coordinate events with AI-powered assistance
+            <p className="mt-4 text-gray-400 text-lg leading-relaxed max-w-sm">
+              Your AI co-pilot for flawless event planning — from intimate dinners to 10,000-person conferences.
             </p>
-            
-            <div className="space-y-6">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center shrink-0">
-                  <Calendar className="w-6 h-6 text-indigo-600" />
+          </div>
+
+          {/* Feature cards */}
+          <div className="flex flex-col gap-3">
+            {features.map((f, i) => (
+              <div
+                key={f.label}
+                className={`feature-card p-4 flex items-center gap-4 animate-slide-left delay-${i + 2}`}
+              >
+                <div
+                  className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+                  style={{ background: `${f.color}22`, border: `1px solid ${f.color}44`, boxShadow: `0 0 18px ${f.glow}` }}
+                >
+                  <f.icon className="w-5 h-5" style={{ color: f.color }} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900">Smart Scheduling</h3>
-                  <p className="text-gray-600">AI-powered event planning and timeline management</p>
+                  <p className="text-sm font-semibold text-white">{f.label}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">{f.desc}</p>
+                </div>
+                <div className="ml-auto w-5 h-5 rounded-full flex items-center justify-center" style={{ background: `${f.color}22` }}>
+                  <ArrowRight className="w-3 h-3" style={{ color: f.color }} />
                 </div>
               </div>
-              
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center shrink-0">
-                  <Users className="w-6 h-6 text-purple-600" />
+            ))}
+          </div>
+
+          {/* Social proof */}
+          <div className="flex items-center gap-6 animate-fade-up delay-5">
+            <div className="flex -space-x-2">
+              {['#8b5cf6', '#06b6d4', '#ec4899', '#f59e0b'].map((c, i) => (
+                <div key={i} className="w-8 h-8 rounded-full border-2 border-[#05071a] flex items-center justify-center" style={{ background: c, zIndex: 4 - i }}>
+                  <span className="text-white text-xs font-bold">{String.fromCharCode(65 + i)}</span>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900">Guest Management</h3>
-                  <p className="text-gray-600">Automated guest list and RSVP tracking</p>
-                </div>
+              ))}
+            </div>
+            <div>
+              <div className="flex gap-0.5 mb-0.5">
+                {[...Array(5)].map((_, i) => <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />)}
               </div>
-              
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-pink-100 rounded-xl flex items-center justify-center shrink-0">
-                  <MapPin className="w-6 h-6 text-pink-600" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900">Venue Coordination</h3>
-                  <p className="text-gray-600">Smart venue selection and management</p>
-                </div>
-              </div>
+              <p className="text-xs text-gray-400">4.9 / 5 from 2,400+ reviews</p>
             </div>
           </div>
         </div>
 
-        {/* Right side - Login Form */}
-        <div className="w-full max-w-md">
-          <div className="bg-gradient-r from-indigo-50 to-purple-20 rounded-3xl shadow-2xl shadow-indigo-100 p-8">
-            <div className="text-center mb-8">
-              <div className="w-16 h-16 bg-linear-to-r from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Calendar className="w-8 h-8 text-white" />
-              </div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                Welcome Back
-              </h2>
-              <p className="text-gray-600">
-                Sign in to your account to continue
-              </p>
-            </div>
+        {/* ══ RIGHT PANEL – Form ══════════════════════ */}
+        <div className="w-full max-w-[420px] animate-scale-in delay-0">
 
-            {error && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">
-                {error}
-              </div>
-            )}
+          {/* Spinning ring decoration */}
+          <div className="relative mb-6">
+            <div
+              className="absolute -inset-4 rounded-[36px] opacity-30 animate-spin-slow"
+              style={{ background: 'conic-gradient(from 0deg, transparent 70%, rgba(124,58,237,0.6) 100%)', filter: 'blur(12px)' }}
+            />
+            <div className="auth-card relative p-8">
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address
-                </label>
+              {/* Top accent line */}
+              <div className="absolute top-0 left-8 right-8 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(139,92,246,0.8), rgba(6,182,212,0.5), transparent)' }} />
+
+              {/* Icon */}
+              <div className="flex justify-center mb-6">
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input
-                    type="email"
-                    required
-                    className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
+                  <div className="absolute inset-0 rounded-2xl glow-pulse" style={{ background: 'linear-gradient(135deg,#7c3aed,#4f46e5)' }} />
+                  <div className="relative w-16 h-16 rounded-2xl gradient-primary flex items-center justify-center">
+                    <Zap className="w-8 h-8 text-white" strokeWidth={2.5} />
+                  </div>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Password
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    className="w-full pl-11 pr-12 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-                  >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                  </button>
-                </div>
+              <div className="text-center mb-7">
+                <h2 className="text-2xl font-bold text-white" style={{ fontFamily: 'Syne, sans-serif' }}>Welcome back 👋</h2>
+                <p className="text-gray-400 text-sm mt-1">Sign in to your account</p>
               </div>
 
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full py-3 px-4 bg-linear-to-r cursor-pointer from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-[1.02]"
-              >
-                {isLoading ? 'Signing in...' : 'Sign In'}
-              </button>
-            </form>
+              {/* Error */}
+              {error && (
+                <div className="mb-5 px-4 py-3 rounded-2xl text-sm flex items-start gap-2.5 animate-fade-down"
+                  style={{ background: 'rgba(239,68,68,0.10)', border: '1px solid rgba(239,68,68,0.30)', color: '#fca5a5' }}>
+                  <div className="w-4 h-4 rounded-full bg-red-500/30 flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">!</div>
+                  {error}
+                </div>
+              )}
 
-            <div className="mt-8 text-center cursor-pointer text-indigo-600">
-              <p className="text-gray-600">
-                Don&apos;t have an account?{' '}
-                <Link
-                  href="/signup"
-                  className="font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Email */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Email</label>
+                  <div className="relative">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors duration-200"
+                      style={{ color: focused === 'email' ? '#8b5cf6' : '#4b5563' }} />
+                    <input
+                      id="login-email"
+                      type="email" required
+                      className="input-field w-full pl-11 pr-4 py-3.5 text-sm"
+                      placeholder="you@example.com"
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      onFocus={() => setFocused('email')}
+                      onBlur={() => setFocused('')}
+                    />
+                  </div>
+                </div>
+
+                {/* Password */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Password</label>
+                  <div className="relative">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors duration-200"
+                      style={{ color: focused === 'password' ? '#8b5cf6' : '#4b5563' }} />
+                    <input
+                      id="login-password"
+                      type={show ? 'text' : 'password'} required
+                      className="input-field w-full pl-11 pr-12 py-3.5 text-sm"
+                      placeholder="Your password"
+                      value={password}
+                      onChange={e => setPassword(e.target.value)}
+                      onFocus={() => setFocused('password')}
+                      onBlur={() => setFocused('')}
+                    />
+                    <button type="button" onClick={() => setShow(!show)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors">
+                      {show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Submit */}
+                <button
+                  id="login-submit"
+                  type="submit" disabled={loading}
+                  className="btn-primary w-full py-4 rounded-2xl p-4 text-sm flex items-center justify-center gap-2.5 mt-2"
                 >
-                  Sign up
-                </Link>
-              </p>
+                  {loading ? (
+                    <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full" style={{ animation: 'spin 0.8s linear infinite' }} /> Signing in…</>
+                  ) : (
+                    <><Zap className="w-4 h-4" strokeWidth={2.5} /> Sign In to Dashboard <ArrowRight className="w-4 h-4 ml-auto" /></>
+                  )}
+                </button>
+              </form>
+
+              <div className="mt-6 pt-5 text-center" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                <p className="text-gray-500 text-sm">
+                  No account yet?{' '}
+                  <Link href="/signup" className="font-semibold text-violet-400 hover:text-violet-300 transition-colors">
+                    Create one free →
+                  </Link>
+                </p>
+              </div>
             </div>
           </div>
         </div>

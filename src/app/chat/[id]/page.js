@@ -10,112 +10,37 @@ import rehypeRaw from 'rehype-raw'
 import ChatInput from '@/components/ChatInput'
 
 const markdownComponents = {
-  h1: ({ children }) => <h1 className="text-xl font-bold mt-4 mb-2">{children}</h1>,
-  h2: ({ children }) => <h2 className="text-lg font-bold mt-3 mb-2">{children}</h2>,
-  h3: ({ children }) => <h3 className="text-base font-bold mt-3 mb-1">{children}</h3>,
-  p: ({ children }) => <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>,
-  strong: ({ children }) => <strong className="font-semibold text-gray-900">{children}</strong>,
-  em: ({ children }) => <em className="italic">{children}</em>,
-  ul: ({ children }) => <ul className="list-disc pl-5 space-y-1 mb-2">{children}</ul>,
-  ol: ({ children }) => <ol className="list-decimal pl-5 space-y-1 mb-2">{children}</ol>,
+  h1: ({ children }) => <h1 className="text-lg font-bold mt-4 mb-2 text-white">{children}</h1>,
+  h2: ({ children }) => <h2 className="text-base font-bold mt-3 mb-1.5 text-white">{children}</h2>,
+  h3: ({ children }) => <h3 className="text-sm font-semibold mt-3 mb-1 text-gray-100">{children}</h3>,
+  p: ({ children }) => <p className="mb-2 last:mb-0 leading-relaxed text-gray-300 text-sm">{children}</p>,
+  strong: ({ children }) => <strong className="font-semibold text-white">{children}</strong>,
+  em: ({ children }) => <em className="italic text-gray-400">{children}</em>,
+  ul: ({ children }) => <ul className="list-disc pl-5 space-y-1 mb-2 text-gray-300 text-sm">{children}</ul>,
+  ol: ({ children }) => <ol className="list-decimal pl-5 space-y-1 mb-2 text-gray-300 text-sm">{children}</ol>,
   li: ({ children }) => <li className="leading-relaxed">{children}</li>,
-  code: ({ inline, children }) =>
-    inline ? (
-      <code className="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded text-xs font-mono">{children}</code>
-    ) : (
-      <pre className="bg-gray-100 text-gray-800 p-3 rounded-lg text-xs font-mono overflow-x-auto my-2">
-        <code>{children}</code>
-      </pre>
-    ),
-  blockquote: ({ children }) => (
-    <blockquote className="border-l-4 border-indigo-300 pl-4 italic text-gray-600 my-2">{children}</blockquote>
-  ),
-  hr: () => <hr className="border-gray-200 my-3" />,
-  table: ({ children }) => (
-    <div className="overflow-x-auto my-6 rounded-2xl border border-gray-200 shadow-sm">
-      <table className="min-w-full border-collapse text-sm">
-        {children}
-      </table>
-    </div>
-  ),
-
-  thead: ({ children }) => (
-    <thead className="bg-linear-to-r from-indigo-100 to-purple-100 sticky top-0 z-10">
-      {children}
-    </thead>
-  ),
-
-  tbody: ({ children }) => (
-    <tbody className="
-    bg-linear-to-r from-indigo-50/30 to-purple-50/30
-    divide-y divide-gray-200
-    [&>tr:nth-child(even)]:bg-linear-to-r
-    [&>tr:nth-child(even)]:from-indigo-50/60
-    [&>tr:nth-child(even)]:to-purple-50/60
-  ">
-      {children}
-    </tbody>
-  ),
-
-  tr: ({ children }) => (
-    <tr className="hover:bg-indigo-50/50 transition-colors duration-200">
-      {children}
-    </tr>
-  ),
-
-  th: ({ children }) => (
-    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-      {children}
-    </th>
-  ),
-
-  td: ({ children }) => (
-    <td className="px-6 py-4 text-sm text-gray-700">
-      {children}
-    </td>
-  ),
+  code: ({ inline, children }) => inline
+    ? <code className="text-violet-300 px-1.5 py-0.5 rounded text-xs font-mono" style={{ background: 'rgba(124,58,237,0.15)', border: '1px solid rgba(124,58,237,0.25)' }}>{children}</code>
+    : <pre className="p-3.5 rounded-xl text-xs font-mono overflow-x-auto my-3" style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.08)' }}><code className="text-gray-300">{children}</code></pre>,
+  blockquote: ({ children }) => <blockquote className="pl-3 my-2 text-sm italic text-gray-400" style={{ borderLeft: '2px solid rgba(124,58,237,0.6)', background: 'rgba(124,58,237,0.05)', padding: '8px 12px', borderRadius: '0 8px 8px 0' }}>{children}</blockquote>,
+  hr: () => <hr className="my-3" style={{ borderColor: 'rgba(255,255,255,0.08)' }} />,
+  table: ({ children }) => <div className="overflow-x-auto my-3 rounded-xl" style={{ border: '1px solid rgba(255,255,255,0.08)' }}><table className="min-w-full text-sm">{children}</table></div>,
+  thead: ({ children }) => <thead style={{ background: 'rgba(124,58,237,0.12)' }}>{children}</thead>,
+  tbody: ({ children }) => <tbody style={{ background: 'rgba(8,11,24,0.6)' }}>{children}</tbody>,
+  tr: ({ children }) => <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>{children}</tr>,
+  th: ({ children }) => <th className="px-4 py-2.5 text-left text-xs font-semibold text-violet-300 uppercase tracking-wider">{children}</th>,
+  td: ({ children }) => <td className="px-4 py-2.5 text-xs text-gray-300">{children}</td>,
 }
+
+import { useMutation, useQuery } from '@apollo/client/react'
+import { Sparkles } from 'lucide-react'
+import { SAVE_CHAT_MUTATION, GET_CHAT } from '../../../graphql/client'
 
 function getMessageText(message) {
   return message.parts?.filter((p) => p.type === 'text').map((p) => p.text).join('') || ''
 }
 
-// Save full messages + metadata to localStorage after every AI response
-function saveToLocalStorage(chatId, allMessages, lastAssistantText) {
-  try {
-    // Save full messages array for this chat
-    const messagesToStore = allMessages.map((m) => ({
-      id: m.id,
-      role: m.role,
-      text: getMessageText(m),
-    }))
-    localStorage.setItem(`chatMessages_${chatId}`, JSON.stringify(messagesToStore))
 
-    // Update metadata in chatHistory list
-    const userMessages = allMessages.filter((m) => m.role === 'user')
-    if (userMessages.length === 0) return
-
-    const firstUserText = getMessageText(userMessages[0])
-    const chatEntry = {
-      id: chatId,
-      title: firstUserText,
-      lastMessage: lastAssistantText,
-      timestamp: new Date().toISOString(),
-    }
-
-    const existing = JSON.parse(localStorage.getItem('chatHistory') || '[]')
-    const idx = existing.findIndex((c) => c.id === chatId)
-    if (idx >= 0) {
-      existing[idx] = chatEntry
-    } else {
-      existing.unshift(chatEntry)
-    }
-    localStorage.setItem('chatHistory', JSON.stringify(existing.slice(0, 50)))
-    window.dispatchEvent(new Event('chatHistoryUpdated'))
-  } catch (e) {
-    console.error('Error saving to localStorage:', e)
-  }
-}
 
 export default function SpecificChatPage() {
   const params = useParams()
@@ -127,12 +52,55 @@ export default function SpecificChatPage() {
 
   const messagesContainerRef = useRef(null)
 
+  const [currentUser, setCurrentUser] = useState(null)
+  const [saveChat] = useMutation(SAVE_CHAT_MUTATION)
+
+  useEffect(() => {
+    try {
+      const user = JSON.parse(localStorage.getItem('currentUser'))
+      if (user) {
+        setCurrentUser(user)
+      }
+    } catch { }
+  }, [])
+
+  const { data: chatData, loading: chatLoading } = useQuery(GET_CHAT, {
+    variables: { chatId, userId: currentUser?.id },
+    skip: !currentUser?.id || !chatId,
+    fetchPolicy: 'network-only'
+  })
+
   const { messages, status, sendMessage, setMessages } = useChat({
     api: '/api/chat',
     id: chatId,
-    onFinish: ({ message, messages: allMessages }) => {
+    onFinish: async ({ message, messages: allMessages }) => {
       const lastText = getMessageText(message)
-      saveToLocalStorage(chatId, allMessages, lastText)
+
+      const userMessages = allMessages.filter((m) => m.role === 'user')
+      const title = userMessages.length > 0 ? getMessageText(userMessages[0]) : 'New Chat'
+
+      const messagesToStore = allMessages.map((m) => ({
+        id: m.id,
+        role: m.role,
+        text: getMessageText(m),
+      }))
+
+      if (currentUser?.id && chatId) {
+        try {
+          await saveChat({
+            variables: {
+              chatId,
+              userId: currentUser.id,
+              title,
+              lastMessage: lastText,
+              messages: messagesToStore
+            }
+          })
+          window.dispatchEvent(new Event('chatHistoryUpdated'))
+        } catch (err) {
+          console.error("Failed to save chat to DB:", err)
+        }
+      }
     },
     onError: (err) => console.error('Chat error:', err),
   })
@@ -200,14 +168,11 @@ export default function SpecificChatPage() {
   /* ---------------- LOAD HISTORY ---------------- */
 
   useEffect(() => {
-    if (!chatId) return
+    if (!chatId || !chatData) return
 
     try {
-      const stored = localStorage.getItem(`chatMessages_${chatId}`)
-      if (stored) {
-        const parsed = JSON.parse(stored)
-
-        const uiMessages = parsed?.map((m) => ({
+      if (chatData?.getChat?.messages) {
+        const uiMessages = chatData.getChat.messages.map((m) => ({
           id: m.id,
           role: m.role,
           parts: [{ type: 'text', text: m.text }],
@@ -220,7 +185,7 @@ export default function SpecificChatPage() {
     } finally {
       setIsLoadingHistory(false)
     }
-  }, [chatId, setMessages])
+  }, [chatId, chatData, setMessages])
 
   const handleSend = () => {
     if (!inputValue.trim() || isLoading) return
@@ -229,82 +194,80 @@ export default function SpecificChatPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col bg-linear-to-b from-white via-gray-50 to-blue-50 h-full relative shadow-2xl glass">
+    <div className="flex flex-col flex-1 overflow-hidden relative">
+
+      {/* Subtle top glow */}
+      <div className="absolute inset-x-0 top-0 h-40 pointer-events-none" style={{ background: 'radial-gradient(ellipse 60% 100% at 50% 0%, rgba(124,58,237,0.06) 0%, transparent 100%)' }} />
 
       {/* SCROLL BUTTON */}
       {scrollDirection && (
         <button
           onClick={scrollDirection === 'up' ? scrollToTop : scrollToBottom}
-          className="absolute bottom-45 right-10 z-20 w-11 h-11 bg-white border border-gray-200 rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-all hover:scale-110"
+          className="absolute bottom-24 right-5 z-20 w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-105"
+          style={{ background: 'rgba(124,58,237,0.25)', border: '1px solid rgba(124,58,237,0.4)', backdropFilter: 'blur(8px)', boxShadow: '0 4px 16px rgba(0,0,0,0.5)' }}
         >
-          {scrollDirection === 'up' ? (
-            <ChevronUp className="w-5 h-5 text-gray-600" />
-          ) : (
-            <ChevronDown className="w-5 h-5 text-gray-600" />
-          )}
+          {scrollDirection === 'up'
+            ? <ChevronUp className="w-4 h-4 text-violet-300" />
+            : <ChevronDown className="w-4 h-4 text-violet-300" />}
         </button>
       )}
 
       {/* MESSAGES */}
-      <div
-        ref={messagesContainerRef}
-        className="flex-1 overflow-y-auto px-6 py-6 h-0 scrollbar-hide"
-      >
-        <div className="max-w-4xl mx-auto space-y-6">
+      <div ref={messagesContainerRef} className="flex-1 overflow-y-auto px-4 py-6 h-0 scrollbar-hide">
+        <div className="max-w-3xl mx-auto space-y-5">
 
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex gap-4 ${message.role === 'user' ? 'justify-end' : 'justify-start'
-                }`}
-            >
-              {message.role === 'assistant' && (
-                <div className="w-10 h-10 bg-linear-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shrink-0 shadow-lg">
-                  <Bot className="w-5 h-5 text-white" />
+          {messages.map(message => {
+            const isUser = message.role === 'user'
+            return (
+              <div key={message.id} className={`flex gap-3 msg-enter ${isUser ? 'justify-end' : 'justify-start'}`}>
+
+                {!isUser && (
+                  <div className="w-8 h-8 rounded-xl gradient-primary flex items-center justify-center shrink-0 mt-0.5"
+                    style={{ boxShadow: '0 0 16px rgba(124,58,237,0.4)' }}>
+                    <Sparkles className="w-4 h-4 text-white" />
+                  </div>
+                )}
+
+                <div className="max-w-[80%]"
+                  style={isUser ? {
+                    background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)',
+                    border: '1px solid rgba(124,58,237,0.4)',
+                    boxShadow: '0 4px 20px rgba(124,58,237,0.3), 0 1px 0 rgba(255,255,255,0.08) inset',
+                    borderRadius: '18px 18px 4px 18px',
+                    padding: '12px 16px',
+                  } : {
+                    background: 'rgba(255,255,255,0.045)',
+                    border: '1px solid rgba(255,255,255,0.09)',
+                    boxShadow: '0 2px 16px rgba(0,0,0,0.35)',
+                    borderRadius: '4px 18px 18px 18px',
+                    padding: '14px 18px',
+                  }}>
+                  {isUser
+                    ? <p className="text-sm text-white leading-relaxed whitespace-pre-wrap">{getMessageText(message)}</p>
+                    : <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} components={markdownComponents}>{getMessageText(message)}</ReactMarkdown>
+                  }
                 </div>
-              )}
 
-              <div
-                className={`max-w-3xl px-5 py-4 rounded-2xl ${message.role === 'user'
-                  ? 'bg-linear-to-r from-indigo-600 to-purple-600 text-white shadow-lg'
-                  : 'bg-white border border-gray-200 text-gray-900 shadow-sm'
-                  }`}
-              >
-                {message.role === 'user' ? (
-                  <p className="text-sm whitespace-pre-wrap">
-                    {getMessageText(message)}
-                  </p>
-                ) : (
-                  <div className="text-sm">
-                    <ReactMarkdown
-                      remarkPlugins={[remarkGfm]}
-                      rehypePlugins={[rehypeRaw]}
-                      components={markdownComponents}
-                    >
-                      {getMessageText(message)}
-                    </ReactMarkdown>
+                {isUser && (
+                  <div className="w-8 h-8 rounded-xl avatar flex items-center justify-center shrink-0 mt-0.5">
+                    <User className="w-4 h-4 text-white" />
                   </div>
                 )}
               </div>
+            )
+          })}
 
-              {message.role === 'user' && (
-                <div className="w-10 h-10 bg-gray-600 rounded-xl flex items-center justify-center shrink-0 shadow-lg">
-                  <User className="w-5 h-5 text-white" />
-                </div>
-              )}
-            </div>
-          ))}
           {isLoading && (
-            <div className="flex gap-4 justify-start mt-6">
-              {/* <div className="w-10 h-10 bg-linear-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
-                <Bot className="w-5 h-5 text-white" />
-              </div> */}
-              <div className="bg-white border border-gray-200 px-5 py-4 rounded-2xl shadow-sm">
-                <div className="flex space-x-2">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
-                </div>
+            <div className="flex gap-3 msg-enter">
+              <div className="w-8 h-8 rounded-xl gradient-primary flex items-center justify-center shrink-0 mt-0.5"
+                style={{ boxShadow: '0 0 16px rgba(124,58,237,0.4)' }}>
+                <Sparkles className="w-4 h-4 text-white" />
+              </div>
+              <div className="px-4 py-3.5 flex items-center gap-1.5"
+                style={{ background: 'rgba(255,255,255,0.045)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: '4px 18px 18px 18px' }}>
+                <span className="typing-dot" />
+                <span className="typing-dot" />
+                <span className="typing-dot" />
               </div>
             </div>
           )}
@@ -317,9 +280,8 @@ export default function SpecificChatPage() {
         setInputValue={setInputValue}
         onSend={handleSend}
         isLoading={isLoading}
-        placeholder="Continue your conversation about event management..."
+        placeholder="Continue your event planning conversation…"
         disabled={isLoadingHistory}
-        chatId={chatId}
       />
     </div>
   )

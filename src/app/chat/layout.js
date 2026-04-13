@@ -6,42 +6,30 @@ import Sidebar from '@/components/Sidebar'
 import ChatHeader from '@/components/ChatHeader'
 
 export default function ChatLayout({ children }) {
-  const router = useRouter()
+  const router   = useRouter()
   const pathname = usePathname()
 
   useEffect(() => {
     const isAuth = localStorage.getItem('isAuthenticated')
-    const user = localStorage.getItem('currentUser')
+    const user   = localStorage.getItem('currentUser')
     if (!isAuth || !user) router.push('/login')
   }, [router])
 
-  const isSpecificChat = pathname.startsWith('/chat/')
-
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
-      
+    <div className="flex h-screen overflow-hidden" style={{ background: '#080b18' }}>
+
       <Sidebar />
 
-      <div className="flex-1 flex flex-col">
-
+      <div className="flex-1 flex flex-col overflow-hidden">
         <ChatHeader
-          title={
-            isSpecificChat
-              ? "AI Event Management Assistant"
-              : "AI Event Management Assistant"
-          }
-          subtitle={
-            isSpecificChat
-              ? "Chat Conversation"
-              : "Your intelligent partner for planning and managing memorable events"
-          }
+          title="AI Event Manager"
+          subtitle="Always online · Powered by Mastra AI"
         />
-
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-hidden flex flex-col">
           {children}
         </main>
-
       </div>
+
     </div>
   )
 }
