@@ -1,6 +1,8 @@
 import { Geist, Geist_Mono, Syne } from "next/font/google";
 import "./globals.css";
 import { AppApolloProvider } from "../providers/ApolloProvider";
+import { ThemeProvider } from "../providers/ThemeProvider";
+import Script from "next/script";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,13 +27,31 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="light" suppressHydrationWarning>
+      <head>
+        <Script id="theme-init" strategy="beforeInteractive">
+          {`
+            (function () {
+              try {
+                var saved = localStorage.getItem('app-theme');
+                var theme = (saved === 'light' || saved === 'dark')
+                  ? saved
+                  : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                document.documentElement.setAttribute('data-theme', theme);
+                document.documentElement.style.colorScheme = theme;
+              } catch (e) {}
+            })();
+          `}
+        </Script>
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} antialiased`}>
-        <AppApolloProvider>
-          <div style={{ position:'relative', zIndex:1 }}>
-            {children}
-          </div>
-        </AppApolloProvider>
+        <ThemeProvider>
+          <AppApolloProvider>
+            <div style={{ position:'relative', zIndex:1 }}>
+              {children}
+            </div>
+          </AppApolloProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

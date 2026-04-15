@@ -41,11 +41,16 @@ export default function LoginPage() {
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden" style={{ zIndex: 1 }}>
 
       {/* ── Decorative orbs ─────────────────────────── */}
-      <div className="orb" style={{ width: 600, height: 600, top: '-20%', left: '-15%', background: 'radial-gradient(circle, rgba(109,40,217,0.5) 0%, transparent 70%)', animationDelay: '0s' }} />
-      <div className="orb" style={{ width: 400, height: 400, bottom: '-10%', right: '-10%', background: 'radial-gradient(circle, rgba(67,56,202,0.45) 0%, transparent 70%)', animationDelay: '-4s' }} />
-      <div className="orb" style={{ width: 250, height: 250, top: '50%', left: '45%', background: 'radial-gradient(circle, rgba(6,182,212,0.25) 0%, transparent 70%)', animationDelay: '-8s', opacity: 0.6 }} />
+      <div className="orb" style={{ width: 600, height: 600, top: '-20%', left: '-15%', background: 'var(--t-orb-1)', animationDelay: '0s' }} />
+      <div className="orb" style={{ width: 400, height: 400, bottom: '-10%', right: '-10%', background: 'var(--t-orb-2)', animationDelay: '-4s' }} />
+      <div className="orb" style={{ width: 250, height: 250, top: '50%', left: '45%', background: 'var(--t-orb-3)', animationDelay: '-8s', opacity: 0.6 }} />
 
-      <div className="relative z-10 w-full max-w-6xl mx-auto px-6 lg:px-8 py-10 flex items-center gap-12 lg:gap-20">
+      <div className="absolute inset-0 pointer-events-none opacity-70" style={{
+        background: 'radial-gradient(ellipse 55% 32% at 50% 12%, rgba(139,92,246,0.18) 0%, transparent 70%)',
+        animation: 'fadeSlideUp 0.8s ease-out',
+      }} />
+
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-6 lg:px-8 py-10 flex items-center gap-12 lg:gap-20 animate-fade-slide-up">
 
         {/* ══ LEFT PANEL ══════════════════════════════ */}
         <div className="hidden lg:flex flex-col flex-1 gap-8">
@@ -53,14 +58,14 @@ export default function LoginPage() {
           {/* Brand */}
           <div className="animate-fade-up delay-0 flex items-center gap-3">
             <div className="relative w-12 h-12">
-              <div className="absolute inset-0 rounded-2xl gradient-primary glow-violet animate-float" />
+              <div className="absolute inset-0 rounded-2xl gradient-primary glow-violet animate-float-slow" />
               <div className="relative w-12 h-12 rounded-2xl gradient-primary flex items-center justify-center">
                 <Zap className="w-6 h-6 text-white" strokeWidth={2.5} />
               </div>
             </div>
             <div>
-              <p className="text-xl font-bold text-white" style={{ fontFamily: 'Syne, sans-serif' }}>Event <span className="gradient-text">AI</span></p>
-              <p className="text-xs text-gray-500 -mt-0.5">Management Platform</p>
+              <p className="text-xl font-bold" style={{ fontFamily: 'Syne, sans-serif', color: 'var(--t-text-primary)' }}>Event <span className="gradient-text">AI</span></p>
+              <p className="text-xs -mt-0.5" style={{ color: 'var(--t-text-muted)' }}>Management Platform</p>
             </div>
           </div>
 
@@ -71,11 +76,11 @@ export default function LoginPage() {
               Trusted by 10,000+ event planners
             </div>
             <h1 className="text-5xl xl:text-6xl font-black leading-[1.08] tracking-tight" style={{ fontFamily: 'Syne, sans-serif' }}>
-              <span className="text-white">Plan events</span><br />
+              <span style={{ color: 'var(--t-text-primary)' }}>Plan events</span><br />
               <span className="shimmer-text">smarter</span>
-              <span className="text-white">, faster</span>
+              <span style={{ color: 'var(--t-text-primary)' }}>, faster</span>
             </h1>
-            <p className="mt-4 text-gray-400 text-lg leading-relaxed max-w-sm">
+            <p className="mt-4 text-lg leading-relaxed max-w-sm" style={{ color: 'var(--t-text-tertiary)' }}>
               Your AI co-pilot for flawless event planning — from intimate dinners to 10,000-person conferences.
             </p>
           </div>
@@ -94,8 +99,8 @@ export default function LoginPage() {
                   <f.icon className="w-5 h-5" style={{ color: f.color }} />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-white">{f.label}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">{f.desc}</p>
+                  <p className="text-sm font-semibold" style={{ color: 'var(--t-text-primary)' }}>{f.label}</p>
+                  <p className="text-xs mt-0.5" style={{ color: 'var(--t-text-muted)' }}>{f.desc}</p>
                 </div>
                 <div className="ml-auto w-5 h-5 rounded-full flex items-center justify-center" style={{ background: `${f.color}22` }}>
                   <ArrowRight className="w-3 h-3" style={{ color: f.color }} />
@@ -108,7 +113,7 @@ export default function LoginPage() {
           <div className="flex items-center gap-6 animate-fade-up delay-5">
             <div className="flex -space-x-2">
               {['#8b5cf6', '#06b6d4', '#ec4899', '#f59e0b'].map((c, i) => (
-                <div key={i} className="w-8 h-8 rounded-full border-2 border-[#05071a] flex items-center justify-center" style={{ background: c, zIndex: 4 - i }}>
+                <div key={i} className="w-8 h-8 rounded-full border-2 flex items-center justify-center" style={{ background: c, zIndex: 4 - i, borderColor: 'var(--t-avatar-border-outer)' }}>
                   <span className="text-white text-xs font-bold">{String.fromCharCode(65 + i)}</span>
                 </div>
               ))}
@@ -117,7 +122,7 @@ export default function LoginPage() {
               <div className="flex gap-0.5 mb-0.5">
                 {[...Array(5)].map((_, i) => <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />)}
               </div>
-              <p className="text-xs text-gray-400">4.9 / 5 from 2,400+ reviews</p>
+              <p className="text-xs" style={{ color: 'var(--t-text-tertiary)' }}>4.9 / 5 from 2,400+ reviews</p>
             </div>
           </div>
         </div>
@@ -129,7 +134,7 @@ export default function LoginPage() {
           <div className="relative mb-6">
             <div
               className="absolute -inset-4 rounded-[36px] opacity-30 animate-spin-slow"
-              style={{ background: 'conic-gradient(from 0deg, transparent 70%, rgba(124,58,237,0.6) 100%)', filter: 'blur(12px)' }}
+              style={{ background: 'var(--t-auth-spinning-ring)', filter: 'blur(12px)' }}
             />
             <div className="auth-card relative p-8">
 
@@ -147,14 +152,14 @@ export default function LoginPage() {
               </div>
 
               <div className="text-center mb-7">
-                <h2 className="text-2xl font-bold text-white" style={{ fontFamily: 'Syne, sans-serif' }}>Welcome back 👋</h2>
-                <p className="text-gray-400 text-sm mt-1">Sign in to your account</p>
+                <h2 className="text-2xl font-bold" style={{ fontFamily: 'Syne, sans-serif', color: 'var(--t-text-primary)' }}>Welcome back 👋</h2>
+                <p className="text-sm mt-1" style={{ color: 'var(--t-text-tertiary)' }}>Sign in to your account</p>
               </div>
 
               {/* Error */}
               {error && (
                 <div className="mb-5 px-4 py-3 rounded-2xl text-sm flex items-start gap-2.5 animate-fade-down"
-                  style={{ background: 'rgba(239,68,68,0.10)', border: '1px solid rgba(239,68,68,0.30)', color: '#fca5a5' }}>
+                  style={{ background: 'var(--t-error-bg)', border: `1px solid var(--t-error-border)`, color: '#fca5a5' }}>
                   <div className="w-4 h-4 rounded-full bg-red-500/30 flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">!</div>
                   {error}
                 </div>
@@ -163,10 +168,10 @@ export default function LoginPage() {
               <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Email */}
                 <div>
-                  <label className="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Email</label>
+                  <label className="block text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: 'var(--t-text-tertiary)' }}>Email</label>
                   <div className="relative">
                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors duration-200"
-                      style={{ color: focused === 'email' ? '#8b5cf6' : '#4b5563' }} />
+                      style={{ color: focused === 'email' ? '#8b5cf6' : 'var(--t-text-muted)' }} />
                     <input
                       id="login-email"
                       type="email" required
@@ -182,10 +187,10 @@ export default function LoginPage() {
 
                 {/* Password */}
                 <div>
-                  <label className="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Password</label>
+                  <label className="block text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: 'var(--t-text-tertiary)' }}>Password</label>
                   <div className="relative">
                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors duration-200"
-                      style={{ color: focused === 'password' ? '#8b5cf6' : '#4b5563' }} />
+                      style={{ color: focused === 'password' ? '#8b5cf6' : 'var(--t-text-muted)' }} />
                     <input
                       id="login-password"
                       type={show ? 'text' : 'password'} required
@@ -197,7 +202,8 @@ export default function LoginPage() {
                       onBlur={() => setFocused('')}
                     />
                     <button type="button" onClick={() => setShow(!show)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors">
+                      className="absolute right-4 top-1/2 -translate-y-1/2 transition-colors"
+                      style={{ color: 'var(--t-text-muted)' }}>
                       {show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
@@ -207,7 +213,7 @@ export default function LoginPage() {
                 <button
                   id="login-submit"
                   type="submit" disabled={loading}
-                  className="btn-primary w-full py-4 rounded-2xl p-4 text-sm flex items-center justify-center gap-2.5 mt-2"
+                className="btn-primary w-full py-4 rounded-2xl p-4 text-sm flex items-center justify-center gap-2.5 mt-2 animate-breathe-glow"
                 >
                   {loading ? (
                     <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full" style={{ animation: 'spin 0.8s linear infinite' }} /> Signing in…</>
@@ -217,8 +223,8 @@ export default function LoginPage() {
                 </button>
               </form>
 
-              <div className="mt-6 pt-5 text-center" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                <p className="text-gray-500 text-sm">
+              <div className="mt-6 pt-5 text-center" style={{ borderTop: `1px solid var(--t-border-subtle)` }}>
+                <p className="text-sm" style={{ color: 'var(--t-text-muted)' }}>
                   No account yet?{' '}
                   <Link href="/signup" className="font-semibold text-violet-400 hover:text-violet-300 transition-colors">
                     Create one free →

@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { LogOut, Sparkles, ChevronDown, Bell } from 'lucide-react'
+import { LogOut, Sparkles, ChevronDown, Bell, Sun, Moon } from 'lucide-react'
+import { useTheme } from '@/providers/ThemeProvider'
 
 export default function ChatHeader({ title, subtitle }) {
   const router = useRouter()
   const [user, setUser]         = useState(null)
   const [menuOpen, setMenuOpen] = useState(false)
+  const { theme, toggleTheme }  = useTheme()
 
   useEffect(() => {
     const raw = localStorage.getItem('currentUser')
@@ -26,15 +28,15 @@ export default function ChatHeader({ title, subtitle }) {
       <header
         className="relative shrink-0 flex items-center justify-between px-5 py-3"
         style={{
-          background: 'linear-gradient(180deg, rgba(12,14,31,0.98) 0%, rgba(8,11,24,0.95) 100%)',
-          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          background: 'var(--t-header-bg)',
+          borderBottom: `1px solid var(--t-header-border)`,
           backdropFilter: 'blur(20px)',
           zIndex: 30,
         }}
       >
         {/* Top accent line */}
         <div className="absolute top-0 inset-x-0 h-px"
-          style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(124,58,237,0.5) 30%, rgba(6,182,212,0.3) 70%, transparent 100%)' }} />
+          style={{ background: 'var(--t-header-accent)' }} />
 
         {/* ── LEFT – Title ──────────────────────── */}
         <div className="flex items-center gap-3">
@@ -43,64 +45,84 @@ export default function ChatHeader({ title, subtitle }) {
               <Sparkles className="w-5 h-5 text-white" />
             </div>
             <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full flex items-center justify-center"
-              style={{ background: '#0c0e1f' }}>
+              style={{ background: 'var(--t-status-dot-bg)' }}>
               <div className="w-2 h-2 rounded-full bg-green-400"
                 style={{ boxShadow: '0 0 6px rgba(34,197,94,0.9)' }} />
             </div>
           </div>
           <div>
-            <h1 className="text-sm font-bold text-white leading-none" style={{ fontFamily: 'Syne, sans-serif' }}>
+            <h1 className="text-sm font-bold leading-none" style={{ fontFamily: 'Syne, sans-serif', color: 'var(--t-header-title)' }}>
               {title || 'AI Event Manager'}
             </h1>
-            <p className="text-xs mt-0.5 leading-none" style={{ color: 'rgba(156,163,175,0.7)' }}>
+            <p className="text-xs mt-0.5 leading-none" style={{ color: 'var(--t-header-subtitle)' }}>
               {subtitle || 'Always online · Powered by Mastra AI'}
             </p>
           </div>
         </div>
 
-        {/* ── RIGHT – User ──────────────────────── */}
-        {user && (
-          <div className="flex items-center gap-2">
+        {/* ── RIGHT – Theme toggle + User ──────────────────────── */}
+        <div className="flex items-center gap-2">
 
-            {/* Bell */}
-            <button
-              className="relative p-2 rounded-xl transition-colors"
-              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}
-            >
-              <Bell className="w-4 h-4" style={{ color: 'rgba(156,163,175,0.7)' }} />
-              <div className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-violet-500" />
-            </button>
+          {/* Theme Toggle */}
+          <button
+            id="theme-toggle-btn"
+            onClick={toggleTheme}
+            className="theme-toggle"
+            aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+            title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+          >
+            <Sun className="theme-toggle-icon theme-toggle-icon-sun" />
+            <Moon className="theme-toggle-icon theme-toggle-icon-moon" />
+            <div className="theme-toggle-knob">
+              {theme === 'light'
+                ? <Sun className="w-3 h-3 text-white" strokeWidth={2.5} />
+                : <Moon className="w-3 h-3 text-white" strokeWidth={2.5} />
+              }
+            </div>
+          </button>
 
-            {/* User chip */}
-            <button
-              id="user-menu-btn"
-              onClick={() => setMenuOpen(prev => !prev)}
-              className="flex items-center gap-2 px-3 py-2 rounded-xl transition-all"
-              style={{
-                background: menuOpen ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.09)',
-              }}
-            >
-              {/* Avatar */}
-              <div className="w-7 h-7 rounded-full avatar flex items-center justify-center shrink-0">
-                <span className="text-white text-xs font-bold">
-                  {user.name?.charAt(0)?.toUpperCase()}
-                </span>
-              </div>
-              {/* Name only – no email in chip to avoid truncation */}
-              <span className="hidden sm:block text-sm font-semibold text-gray-200">
-                {user.name?.split(' ')[0]}
-              </span>
-              <ChevronDown
-                className="w-3.5 h-3.5 transition-transform duration-200"
+          {user && (
+            <>
+              {/* Bell */}
+              {/* <button
+                className="relative p-2 rounded-xl transition-colors"
+                style={{ background: 'var(--t-header-bell-bg)', border: `1px solid var(--t-header-bell-border)` }}
+              >
+                <Bell className="w-4 h-4" style={{ color: 'var(--t-header-bell-icon)' }} />
+                <div className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-violet-500" />
+              </button> */}
+
+              {/* User chip */}
+              <button
+                id="user-menu-btn"
+                onClick={() => setMenuOpen(prev => !prev)}
+                className="flex items-center gap-2 px-3 py-2 rounded-xl transition-all"
                 style={{
-                  color: 'rgba(156,163,175,0.6)',
-                  transform: menuOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                  background: menuOpen ? 'var(--t-header-user-bg-open)' : 'var(--t-header-user-bg)',
+                  border: `1px solid var(--t-header-user-border)`,
                 }}
-              />
-            </button>
-          </div>
-        )}
+              >
+                {/* Avatar */}
+                <div className="w-7 h-7 rounded-full avatar flex items-center justify-center shrink-0">
+                  <span className="text-white text-xs font-bold">
+                    {user.name?.charAt(0)?.toUpperCase()}
+                  </span>
+                </div>
+                {/* Name only – no email in chip to avoid truncation */}
+                <span className="hidden sm:block text-sm font-semibold" style={{ color: 'var(--t-header-user-name)' }}>
+                  {user.name?.split(' ')[0]}
+                </span>
+                <ChevronDown
+                  className="w-3.5 h-3.5 transition-transform duration-200"
+                  style={{
+                    color: 'var(--t-header-chevron)',
+                    transform: menuOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                  }}
+                />
+              </button>
+            </>
+          )}
+        </div>
       </header>
 
       {/* ── Dropdown rendered outside header so it always layers above content ── */}
@@ -117,13 +139,13 @@ export default function ChatHeader({ title, subtitle }) {
             className="fixed top-[60px] right-4 w-52 rounded-2xl overflow-hidden animate-fade-down"
             style={{
               zIndex: 9999,
-              background: 'linear-gradient(160deg, #11142a 0%, #0c0e1f 100%)',
-              border: '1px solid rgba(255,255,255,0.11)',
-              boxShadow: '0 24px 60px rgba(0,0,0,0.75), 0 0 0 1px rgba(255,255,255,0.04) inset',
+              background: 'var(--t-dropdown-bg)',
+              border: `1px solid var(--t-dropdown-border)`,
+              boxShadow: `0 24px 60px var(--t-dropdown-shadow), 0 0 0 1px rgba(255,255,255,0.04) inset`,
             }}
           >
             {/* User info header */}
-            <div className="px-4 py-3.5" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+            <div className="px-4 py-3.5" style={{ borderBottom: `1px solid var(--t-dropdown-divider)` }}>
               <div className="flex items-center gap-2.5">
                 <div className="w-9 h-9 rounded-full avatar flex items-center justify-center shrink-0">
                   <span className="text-white text-sm font-bold">
@@ -131,8 +153,8 @@ export default function ChatHeader({ title, subtitle }) {
                   </span>
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-white truncate">{user.name}</p>
-                  <p className="text-xs text-gray-500 break-all leading-snug">{user.email}</p>
+                  <p className="text-sm font-semibold truncate" style={{ color: 'var(--t-dropdown-name)' }}>{user.name}</p>
+                  <p className="text-xs break-all leading-snug" style={{ color: 'var(--t-dropdown-email)' }}>{user.email}</p>
                 </div>
               </div>
             </div>

@@ -10,26 +10,26 @@ import rehypeRaw from 'rehype-raw'
 import ChatInput from '@/components/ChatInput'
 
 const markdownComponents = {
-  h1: ({ children }) => <h1 className="text-lg font-bold mt-4 mb-2 text-white">{children}</h1>,
-  h2: ({ children }) => <h2 className="text-base font-bold mt-3 mb-1.5 text-white">{children}</h2>,
-  h3: ({ children }) => <h3 className="text-sm font-semibold mt-3 mb-1 text-gray-100">{children}</h3>,
-  p: ({ children }) => <p className="mb-2 last:mb-0 leading-relaxed text-gray-300 text-sm">{children}</p>,
-  strong: ({ children }) => <strong className="font-semibold text-white">{children}</strong>,
-  em: ({ children }) => <em className="italic text-gray-400">{children}</em>,
-  ul: ({ children }) => <ul className="list-disc pl-5 space-y-1 mb-2 text-gray-300 text-sm">{children}</ul>,
-  ol: ({ children }) => <ol className="list-decimal pl-5 space-y-1 mb-2 text-gray-300 text-sm">{children}</ol>,
+  h1: ({ children }) => <h1 className="text-lg font-bold mt-4 mb-2" style={{ color: 'var(--t-md-h-color)' }}>{children}</h1>,
+  h2: ({ children }) => <h2 className="text-base font-bold mt-3 mb-1.5" style={{ color: 'var(--t-md-h-color)' }}>{children}</h2>,
+  h3: ({ children }) => <h3 className="text-sm font-semibold mt-3 mb-1" style={{ color: 'var(--t-md-h-color)' }}>{children}</h3>,
+  p: ({ children }) => <p className="mb-2 last:mb-0 leading-relaxed text-sm" style={{ color: 'var(--t-md-p-color)' }}>{children}</p>,
+  strong: ({ children }) => <strong className="font-semibold" style={{ color: 'var(--t-md-strong-color)' }}>{children}</strong>,
+  em: ({ children }) => <em className="italic" style={{ color: 'var(--t-md-em-color)' }}>{children}</em>,
+  ul: ({ children }) => <ul className="list-disc pl-5 space-y-1 mb-2 text-sm" style={{ color: 'var(--t-md-list-color)' }}>{children}</ul>,
+  ol: ({ children }) => <ol className="list-decimal pl-5 space-y-1 mb-2 text-sm" style={{ color: 'var(--t-md-list-color)' }}>{children}</ol>,
   li: ({ children }) => <li className="leading-relaxed">{children}</li>,
   code: ({ inline, children }) => inline
-    ? <code className="text-violet-300 px-1.5 py-0.5 rounded text-xs font-mono" style={{ background: 'rgba(124,58,237,0.15)', border: '1px solid rgba(124,58,237,0.25)' }}>{children}</code>
-    : <pre className="p-3.5 rounded-xl text-xs font-mono overflow-x-auto my-3" style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.08)' }}><code className="text-gray-300">{children}</code></pre>,
-  blockquote: ({ children }) => <blockquote className="pl-3 my-2 text-sm italic text-gray-400" style={{ borderLeft: '2px solid rgba(124,58,237,0.6)', background: 'rgba(124,58,237,0.05)', padding: '8px 12px', borderRadius: '0 8px 8px 0' }}>{children}</blockquote>,
-  hr: () => <hr className="my-3" style={{ borderColor: 'rgba(255,255,255,0.08)' }} />,
-  table: ({ children }) => <div className="overflow-x-auto my-3 rounded-xl" style={{ border: '1px solid rgba(255,255,255,0.08)' }}><table className="min-w-full text-sm">{children}</table></div>,
-  thead: ({ children }) => <thead style={{ background: 'rgba(124,58,237,0.12)' }}>{children}</thead>,
-  tbody: ({ children }) => <tbody style={{ background: 'rgba(8,11,24,0.6)' }}>{children}</tbody>,
-  tr: ({ children }) => <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>{children}</tr>,
-  th: ({ children }) => <th className="px-4 py-2.5 text-left text-xs font-semibold text-violet-300 uppercase tracking-wider">{children}</th>,
-  td: ({ children }) => <td className="px-4 py-2.5 text-xs text-gray-300">{children}</td>,
+    ? <code className="px-1.5 py-0.5 rounded text-xs font-mono" style={{ background: 'var(--t-md-code-bg)', border: `1px solid var(--t-md-code-border)`, color: 'var(--t-md-code-text)' }}>{children}</code>
+    : <pre className="p-3.5 rounded-xl text-xs font-mono overflow-x-auto my-3" style={{ background: 'var(--t-md-pre-bg)', border: `1px solid var(--t-md-pre-border)` }}><code style={{ color: 'var(--t-md-pre-text)' }}>{children}</code></pre>,
+  blockquote: ({ children }) => <blockquote className="pl-3 my-2 text-sm italic" style={{ borderLeft: `2px solid var(--t-md-quote-border)`, background: 'var(--t-md-quote-bg)', padding: '8px 12px', borderRadius: '0 8px 8px 0', color: 'var(--t-md-quote-text)' }}>{children}</blockquote>,
+  hr: () => <hr className="my-3" style={{ borderColor: 'var(--t-md-hr)' }} />,
+  table: ({ children }) => <div className="overflow-x-auto my-3 rounded-xl" style={{ border: `1px solid var(--t-md-table-border)` }}><table className="min-w-full text-sm">{children}</table></div>,
+  thead: ({ children }) => <thead style={{ background: 'var(--t-md-thead-bg)' }}>{children}</thead>,
+  tbody: ({ children }) => <tbody style={{ background: 'var(--t-md-tbody-bg)' }}>{children}</tbody>,
+  tr: ({ children }) => <tr style={{ borderBottom: `1px solid var(--t-md-tr-border)` }}>{children}</tr>,
+  th: ({ children }) => <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--t-md-th-text)' }}>{children}</th>,
+  td: ({ children }) => <td className="px-4 py-2.5 text-xs" style={{ color: 'var(--t-md-td-text)' }}>{children}</td>,
 }
 
 function getMessageText(message) {
@@ -212,21 +212,21 @@ export default function SpecificChatPage() {
   }
 
   return (
-    <div className="flex flex-col flex-1 overflow-hidden relative">
+    <div className="flex flex-col flex-1 overflow-hidden relative animate-fade-slide-up">
 
       {/* Subtle top glow */}
-      <div className="absolute inset-x-0 top-0 h-40 pointer-events-none" style={{ background: 'radial-gradient(ellipse 60% 100% at 50% 0%, rgba(124,58,237,0.06) 0%, transparent 100%)' }} />
+      <div className="absolute inset-x-0 top-0 h-40 pointer-events-none animate-float-slow" style={{ background: `radial-gradient(ellipse 60% 100% at 50% 0%, var(--t-chat-glow) 0%, transparent 100%)` }} />
 
       {/* SCROLL BUTTON */}
       {scrollDirection && (
         <button
           onClick={scrollDirection === 'up' ? scrollToTop : scrollToBottom}
           className="absolute bottom-24 right-5 z-20 w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-105"
-          style={{ background: 'rgba(124,58,237,0.25)', border: '1px solid rgba(124,58,237,0.4)', backdropFilter: 'blur(8px)', boxShadow: '0 4px 16px rgba(0,0,0,0.5)' }}
+          style={{ background: 'var(--t-scroll-btn-bg)', border: `1px solid var(--t-scroll-btn-border)`, backdropFilter: 'blur(8px)', boxShadow: `0 4px 16px var(--t-scroll-btn-shadow)` }}
         >
           {scrollDirection === 'up'
-            ? <ChevronUp className="w-4 h-4 text-violet-300" />
-            : <ChevronDown className="w-4 h-4 text-violet-300" />}
+            ? <ChevronUp className="w-4 h-4 text-violet-400" />
+            : <ChevronDown className="w-4 h-4 text-violet-400" />}
         </button>
       )}
 
@@ -254,9 +254,9 @@ export default function SpecificChatPage() {
                     borderRadius: '18px 18px 4px 18px',
                     padding: '12px 16px',
                   } : {
-                    background: 'rgba(255,255,255,0.045)',
-                    border: '1px solid rgba(255,255,255,0.09)',
-                    boxShadow: '0 2px 16px rgba(0,0,0,0.35)',
+                    background: 'var(--t-msg-ai-bg)',
+                    border: `1px solid var(--t-msg-ai-border)`,
+                    boxShadow: `0 2px 16px var(--t-msg-ai-shadow)`,
                     borderRadius: '4px 18px 18px 18px',
                     padding: '14px 18px',
                   }}>
@@ -281,8 +281,8 @@ export default function SpecificChatPage() {
                 style={{ boxShadow: '0 0 16px rgba(124,58,237,0.4)' }}>
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
-              <div className="px-4 py-3.5 flex items-center gap-1.5"
-                style={{ background: 'rgba(255,255,255,0.045)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: '4px 18px 18px 18px' }}>
+              <div className="px-4 py-3.5 flex items-center gap-1.5 animate-breathe-glow"
+                style={{ background: 'var(--t-typing-bg)', border: `1px solid var(--t-typing-border)`, borderRadius: '4px 18px 18px 18px' }}>
                 <span className="typing-dot" />
                 <span className="typing-dot" />
                 <span className="typing-dot" />

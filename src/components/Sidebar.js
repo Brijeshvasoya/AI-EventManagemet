@@ -97,15 +97,15 @@ export default function Sidebar() {
       <aside
         className={`relative flex flex-col h-screen transition-all duration-300 ease-in-out shrink-0 ${collapsed ? 'w-[64px]' : 'w-[268px]'}`}
         style={{
-          background: 'linear-gradient(180deg, #0c0e1f 0%, #080b18 100%)',
-          borderRight: '1px solid rgba(255,255,255,0.06)',
+          background: 'var(--t-sidebar-bg)',
+          borderRight: `1px solid var(--t-sidebar-border)`,
         }}
       >
         {/* Top shimmer line */}
-        <div className="absolute top-0 inset-x-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(124,58,237,0.6), transparent)' }} />
+        <div className="absolute top-0 inset-x-0 h-px" style={{ background: 'var(--t-sidebar-shimmer)' }} />
 
         {/* ── HEADER ─────────────────────────── */}
-        <div className="p-3 space-y-2.5" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+        <div className="p-3 space-y-2.5" style={{ borderBottom: `1px solid var(--t-border-subtle)` }}>
           <div className="flex items-center justify-between">
             {!collapsed && (
               <div className="flex items-center gap-2">
@@ -113,17 +113,21 @@ export default function Sidebar() {
                   <Sparkles className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-white leading-none" style={{ fontFamily: 'Syne, sans-serif' }}>
+                  <p className="text-sm font-bold leading-none" style={{ fontFamily: 'Syne, sans-serif', color: 'var(--t-text-primary)' }}>
                     Event <span className="gradient-text">AI</span>
                   </p>
-                  <p className="text-[10px] leading-none mt-0.5" style={{ color: 'rgba(156,163,175,0.75)' }}>Your AI Assistant</p>
+                  <p className="text-[10px] leading-none mt-0.5" style={{ color: 'var(--t-status-text)' }}>Your AI Assistant</p>
                 </div>
               </div>
             )}
             <button
               onClick={() => setCollapsed(!collapsed)}
-              className="p-1.5 rounded-lg text-gray-600 hover:text-gray-300 transition-colors ml-auto"
-              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}
+              className="p-1.5 rounded-lg transition-colors ml-auto"
+              style={{
+                background: 'var(--t-collapse-btn-bg)',
+                border: `1px solid var(--t-collapse-btn-border)`,
+                color: 'var(--t-collapse-btn-text)',
+              }}
             >
               {collapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronLeft className="w-3.5 h-3.5" />}
             </button>
@@ -147,9 +151,9 @@ export default function Sidebar() {
 
         {/* ── SEARCH ─────────────────────────── */}
         {!collapsed && (
-          <div className="px-3 py-2.5" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="px-3 py-2.5" style={{ borderBottom: `1px solid var(--t-sidebar-border)` }}>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: 'rgba(156,163,175,0.5)' }} />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: 'var(--t-text-tertiary)' }} />
               <input
                 type="text"
                 placeholder="Search conversations…"
@@ -157,9 +161,9 @@ export default function Sidebar() {
                 onChange={e => setSearch(e.target.value)}
                 className="w-full pl-9 pr-3 py-2 text-xs rounded-xl outline-none transition-all"
                 style={{
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.09)',
-                  color: '#e5e7eb',
+                  background: 'var(--t-sidebar-search-bg)',
+                  border: `1px solid var(--t-sidebar-search-border)`,
+                  color: 'var(--t-text-secondary)',
                 }}
               />
             </div>
@@ -172,25 +176,25 @@ export default function Sidebar() {
             filtered.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-10 px-4 text-center">
                 <div className="w-10 h-10 rounded-2xl mb-3 flex items-center justify-center"
-                  style={{ background: 'rgba(124,58,237,0.1)', border: '1px solid rgba(124,58,237,0.2)' }}>
+                  style={{ background: 'var(--t-empty-icon-bg)', border: `1px solid var(--t-empty-icon-border)` }}>
                   <MessageSquare className="w-5 h-5 text-violet-500" />
                 </div>
-                <p className="text-xs text-gray-600">{search ? 'No results found' : 'No conversations yet'}</p>
-                {!search && <p className="text-xs text-gray-700 mt-1">Start a new chat above</p>}
+                <p className="text-xs" style={{ color: 'var(--t-empty-text)' }}>{search ? 'No results found' : 'No conversations yet'}</p>
+                {!search && <p className="text-xs mt-1" style={{ color: 'var(--t-empty-hint)' }}>Start a new chat above</p>}
               </div>
             ) : (
               Object.entries(grouped).map(([label, chats]) =>
                 chats.length === 0 ? null : (
                   <div key={label} className="mb-4 px-2">
-                    <p className="text-[10px] font-bold uppercase tracking-widest px-2 mb-1.5" style={{ color: 'rgba(156,163,175,0.5)' }}>{label}</p>
+                    <p className="text-[10px] font-bold uppercase tracking-widest px-2 mb-1.5" style={{ color: 'var(--t-sidebar-grouptext)' }}>{label}</p>
                     <div className="space-y-0.5">
                       {chats.map(chat => (
                         <div
                           key={chat.id}
                           className="group relative rounded-xl cursor-pointer transition-all duration-200"
                           style={isActive(chat.id) ? {
-                            background: 'linear-gradient(135deg, rgba(124,58,237,0.18) 0%, rgba(79,70,229,0.12) 100%)',
-                            border: '1px solid rgba(124,58,237,0.3)',
+                            background: 'var(--t-sidebar-item-active-bg)',
+                            border: `1px solid var(--t-sidebar-item-active-border)`,
                           } : {
                             border: '1px solid transparent',
                           }}
@@ -200,23 +204,29 @@ export default function Sidebar() {
                             className="w-full text-left p-2.5 pr-8"
                           >
                             <div className="flex items-start gap-2.5">
-                              <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 transition-all ${isActive(chat.id) ? 'gradient-primary' : 'bg-white/[0.05] group-hover:bg-violet-500/10'}`}>
-                                <MessageSquare className={`w-3.5 h-3.5 ${isActive(chat.id) ? 'text-white' : 'text-gray-600 group-hover:text-violet-400'}`} />
+                              <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 transition-all ${isActive(chat.id) ? 'gradient-primary' : ''}`}
+                                style={!isActive(chat.id) ? { background: 'var(--t-sidebar-chaticon-inactive-bg)' } : {}}>
+                                <MessageSquare className={`w-3.5 h-3.5 ${isActive(chat.id) ? 'text-white' : ''}`}
+                                  style={!isActive(chat.id) ? { color: 'var(--t-sidebar-delete-text)' } : {}} />
                               </div>
                               <div className="min-w-0 flex-1">
-                                <p className={`text-xs font-semibold truncate leading-snug ${isActive(chat.id) ? 'text-white' : 'text-gray-300 group-hover:text-white'}`}>
+                                <p className={`text-xs font-semibold truncate leading-snug`}
+                                  style={{ color: isActive(chat.id) ? 'var(--t-text-primary)' : 'var(--t-sidebar-chatname-inactive)' }}>
                                   {chat.title}
                                 </p>
                                 <div className="flex items-center gap-1 mt-1">
-                                  <Clock className="w-2.5 h-2.5" style={{ color: 'rgba(156,163,175,0.4)' }} />
-                                  <span className="text-[10px]" style={{ color: 'rgba(156,163,175,0.45)' }}>{formatTime(chat.updatedAt || chat.createdAt)}</span>
+                                  <Clock className="w-2.5 h-2.5" style={{ color: 'var(--t-chat-time-icon)' }} />
+                                  <span className="text-[10px]" style={{ color: 'var(--t-chat-time-text)' }}>{formatTime(chat.updatedAt || chat.createdAt)}</span>
                                 </div>
                               </div>
                             </div>
                           </button>
                           <button
                             onClick={e => { e.stopPropagation(); setToDelete(chat.id) }}
-                            className="absolute top-2 right-2 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all text-gray-600 hover:text-red-400 hover:bg-red-500/10"
+                            className="absolute top-2 right-2 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all"
+                            style={{ color: 'var(--t-sidebar-delete-text)' }}
+                            onMouseEnter={e => { e.currentTarget.style.color = 'var(--t-sidebar-delete-hover-text)'; e.currentTarget.style.background = 'var(--t-sidebar-delete-hover-bg)' }}
+                            onMouseLeave={e => { e.currentTarget.style.color = 'var(--t-sidebar-delete-text)'; e.currentTarget.style.background = 'transparent' }}
                           >
                             <Trash2 className="w-3 h-3" />
                           </button>
@@ -232,7 +242,8 @@ export default function Sidebar() {
             <div className="px-2 space-y-1">
               {threads.slice(0, 10).map(chat => (
                 <button key={chat.id} onClick={() => router.push(`/chat/${chat.id}`)} title={chat.title}
-                  className={`w-full p-2.5 rounded-xl flex items-center justify-center transition-all ${isActive(chat.id) ? 'gradient-primary' : 'text-gray-600 hover:text-violet-400 hover:bg-violet-500/10'}`}>
+                  className={`w-full p-2.5 rounded-xl flex items-center justify-center transition-all ${isActive(chat.id) ? 'gradient-primary text-white' : ''}`}
+                  style={!isActive(chat.id) ? { color: 'var(--t-sidebar-collapsed-inactive)' } : {}}>
                   <MessageSquare className="w-4 h-4" />
                 </button>
               ))}
@@ -242,14 +253,14 @@ export default function Sidebar() {
 
         {/* ── USER FOOTER ────────────────────── */}
         {!collapsed && user && (
-          <div className="p-3" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-            <div className="flex items-center gap-2.5 px-2 py-2 rounded-xl" style={{ background: 'rgba(255,255,255,0.03)' }}>
+          <div className="p-3" style={{ borderTop: `1px solid var(--t-sidebar-footer-border)` }}>
+            <div className="flex items-center gap-2.5 px-2 py-2 rounded-xl" style={{ background: 'var(--t-sidebar-user-bg)' }}>
               <div className="w-7 h-7 rounded-full avatar flex items-center justify-center shrink-0">
                 <span className="text-white text-xs font-bold">{user.name?.charAt(0)?.toUpperCase()}</span>
               </div>
               <div className="min-w-0">
-                <p className="text-xs font-semibold text-gray-200 truncate">{user.name}</p>
-                <p className="text-[10px] truncate" style={{ color: 'rgba(156,163,175,0.6)' }}>{user.email}</p>
+                <p className="text-xs font-semibold truncate" style={{ color: 'var(--t-sidebar-user-name)' }}>{user.name}</p>
+                <p className="text-[10px] truncate" style={{ color: 'var(--t-sidebar-user-email)' }}>{user.email}</p>
               </div>
               <div className="ml-auto shrink-0">
                 <div className="w-1.5 h-1.5 rounded-full bg-green-400" style={{ boxShadow: '0 0 6px rgba(34,197,94,0.8)' }} />
@@ -262,26 +273,26 @@ export default function Sidebar() {
       {/* ── DELETE MODAL ────────────────────────────── */}
       {toDelete && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
-          style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(12px)' }}>
+          style={{ background: 'var(--t-delete-modal-overlay)', backdropFilter: 'blur(12px)' }}>
           <div className="w-full max-w-sm rounded-2xl p-6 animate-scale-in"
-            style={{ background: '#0c0e1f', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 24px 80px rgba(0,0,0,0.8)' }}>
+            style={{ background: 'var(--t-delete-modal-bg)', border: `1px solid var(--t-delete-modal-border)`, boxShadow: `0 24px 80px var(--t-delete-modal-shadow)` }}>
             <div className="flex items-center gap-3 mb-3">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center"
                 style={{ background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.25)' }}>
                 <Trash2 className="w-5 h-5 text-red-400" />
               </div>
               <div>
-                <h3 className="font-semibold text-white text-sm">Delete conversation?</h3>
-                <p className="text-gray-500 text-xs">This cannot be undone</p>
+                <h3 className="font-semibold text-sm" style={{ color: 'var(--t-delete-modal-title)' }}>Delete conversation?</h3>
+                <p className="text-xs" style={{ color: 'var(--t-delete-modal-subtitle)' }}>This cannot be undone</p>
               </div>
             </div>
-            <p className="text-gray-400 text-sm mb-5 leading-relaxed">
+            <p className="text-sm mb-5 leading-relaxed" style={{ color: 'var(--t-delete-modal-text)' }}>
               All messages in this conversation will be permanently removed.
             </p>
             <div className="flex gap-2">
               <button onClick={() => setToDelete(null)}
-                className="flex-1 py-2.5 rounded-xl text-sm font-medium text-gray-400"
-                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                className="flex-1 py-2.5 rounded-xl text-sm font-medium"
+                style={{ background: 'var(--t-delete-cancel-bg)', border: `1px solid var(--t-delete-cancel-border)`, color: 'var(--t-delete-cancel-text)' }}>
                 Cancel
               </button>
               <button onClick={confirmDelete}
