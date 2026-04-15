@@ -3,7 +3,7 @@
 import { useChat } from '@ai-sdk/react'
 import { useState, useEffect, useRef, useLayoutEffect } from 'react'
 import { useParams } from 'next/navigation'
-import { Bot, User, ChevronUp, ChevronDown } from 'lucide-react'
+import { Bot, User, ChevronUp, ChevronDown, Sparkles } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
@@ -32,15 +32,9 @@ const markdownComponents = {
   td: ({ children }) => <td className="px-4 py-2.5 text-xs text-gray-300">{children}</td>,
 }
 
-import { useMutation, useQuery } from '@apollo/client/react'
-import { Sparkles } from 'lucide-react'
-import { SAVE_CHAT_MUTATION, GET_CHAT } from '../../../graphql/client'
-
 function getMessageText(message) {
   return message.parts?.filter((p) => p.type === 'text').map((p) => p.text).join('') || ''
 }
-
-
 
 export default function SpecificChatPage() {
   const params = useParams()
@@ -53,54 +47,28 @@ export default function SpecificChatPage() {
   const messagesContainerRef = useRef(null)
 
   const [currentUser, setCurrentUser] = useState(null)
-  const [saveChat] = useMutation(SAVE_CHAT_MUTATION)
+  const currentUserRef = useRef(null)
 
   useEffect(() => {
     try {
       const user = JSON.parse(localStorage.getItem('currentUser'))
       if (user) {
         setCurrentUser(user)
+        currentUserRef.current = user
       }
     } catch { }
   }, [])
 
-  const { data: chatData, loading: chatLoading } = useQuery(GET_CHAT, {
-    variables: { chatId, userId: currentUser?.id },
-    skip: !currentUser?.id || !chatId,
-    fetchPolicy: 'network-only'
-  })
-
   const { messages, status, sendMessage, setMessages } = useChat({
     api: '/api/chat',
     id: chatId,
-    onFinish: async ({ message, messages: allMessages }) => {
-      const lastText = getMessageText(message)
-
-      const userMessages = allMessages.filter((m) => m.role === 'user')
-      const title = userMessages.length > 0 ? getMessageText(userMessages[0]) : 'New Chat'
-
-      const messagesToStore = allMessages.map((m) => ({
-        id: m.id,
-        role: m.role,
-        text: getMessageText(m),
-      }))
-
-      if (currentUser?.id && chatId) {
-        try {
-          await saveChat({
-            variables: {
-              chatId,
-              userId: currentUser.id,
-              title,
-              lastMessage: lastText,
-              messages: messagesToStore
-            }
-          })
-          window.dispatchEvent(new Event('chatHistoryUpdated'))
-        } catch (err) {
-          console.error("Failed to save chat to DB:", err)
-        }
-      }
+    body: {
+      resourceId: currentUser?.id || 'anonymous',
+    },
+    onFinish: async () => {
+      // Mastra Memory handles storing messages automatically
+      // Just notify sidebar to refresh the thread list
+      window.dispatchEvent(new Event('chatHistoryUpdated'))
     },
     onError: (err) => console.error('Chat error:', err),
   })
@@ -165,31 +133,81 @@ export default function SpecificChatPage() {
     container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' })
   }
 
-  /* ---------------- LOAD HISTORY ---------------- */
+  /* ---------------- LOAD HISTORY FROM MASTRA MEMORY ---------------- */
 
   useEffect(() => {
-    if (!chatId || !chatData) return
+    if (!chatId || !currentUser?.id) return
 
-    try {
-      if (chatData?.getChat?.messages) {
-        const uiMessages = chatData.getChat.messages.map((m) => ({
-          id: m.id,
-          role: m.role,
-          parts: [{ type: 'text', text: m.text }],
-        }))
+    const loadHistory = async () => {
+      try {
+        const res = await fetch(`/api/chat/threads/${chatId}`)
+        if (!res.ok) {
+          setIsLoadingHistory(false)
+          return
+        }
 
-        setMessages(uiMessages)
+        const data = await res.json()
+
+        if (data.messages && data.messages.length > 0) {
+          // Convert MastraDBMessage format to useChat UI format
+          // Mastra stores content as JSON string: {"format":2,"parts":[...],"content":"..."}
+          const uiMessages = data.messages
+            .filter((m) => m.role === 'user' || m.role === 'assistant')
+            .map((m) => {
+              let text = ''
+              try {
+                if (typeof m.content === 'string') {
+                  // Try parsing as JSON first (Mastra format)
+                  const parsed = JSON.parse(m.content)
+                  if (parsed.parts && Array.isArray(parsed.parts)) {
+                    text = parsed.parts
+                      .filter((p) => p.type === 'text')
+                      .map((p) => p.text)
+                      .join('')
+                  } else if (parsed.content) {
+                    text = parsed.content
+                  } else {
+                    text = m.content
+                  }
+                } else if (m.content?.parts) {
+                  text = m.content.parts
+                    .filter((p) => p.type === 'text')
+                    .map((p) => p.text)
+                    .join('')
+                } else if (m.content?.content) {
+                  text = m.content.content
+                } else {
+                  text = String(m.content || '')
+                }
+              } catch {
+                // Not JSON, use as plain text
+                text = String(m.content || '')
+              }
+
+              return {
+                id: m.id,
+                role: m.role,
+                parts: [{ type: 'text', text }],
+              }
+            })
+            .filter((m) => m.parts[0].text.trim().length > 0)
+
+          setMessages(uiMessages)
+        }
+      } catch (e) {
+        console.error('Failed to load chat history:', e)
+      } finally {
+        setIsLoadingHistory(false)
       }
-    } catch (e) {
-      console.error(e)
-    } finally {
-      setIsLoadingHistory(false)
     }
-  }, [chatId, chatData, setMessages])
+
+    loadHistory()
+  }, [chatId, currentUser?.id, setMessages])
 
   const handleSend = () => {
     if (!inputValue.trim() || isLoading) return
-    sendMessage({ text: inputValue })
+    const userId = currentUserRef.current?.id || currentUser?.id || 'anonymous'
+    sendMessage({ text: inputValue }, { body: { resourceId: userId } })
     setInputValue('')
   }
 

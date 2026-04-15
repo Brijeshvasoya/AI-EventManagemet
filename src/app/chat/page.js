@@ -2,15 +2,13 @@
 'use client'
 
 import { useChat } from '@ai-sdk/react'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Bot, User, Calendar, Users, MapPin, Clock, DollarSign, Sparkles, Zap, ArrowRight } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
 import ChatInput from '@/components/ChatInput'
-import { useMutation } from '@apollo/client/react'
-import { SAVE_CHAT_MUTATION } from '../../graphql/client'
 
 /* ── Markdown renderer ───────────────────────────────────── */
 const md = {
@@ -57,10 +55,16 @@ export default function ChatPage() {
   const [inputValue, setInputValue] = useState('')
   const [chatId, setChatId]         = useState(null)
   const [currentUser, setCurrentUser] = useState(null)
-  const [saveChat] = useMutation(SAVE_CHAT_MUTATION)
+  const currentUserRef = useRef(null)
 
   useEffect(() => {
-    try { const u = JSON.parse(localStorage.getItem('currentUser')); if (u) setCurrentUser(u) } catch {}
+    try {
+      const u = JSON.parse(localStorage.getItem('currentUser'))
+      if (u) {
+        setCurrentUser(u)
+        currentUserRef.current = u
+      }
+    } catch {}
   }, [])
 
   useEffect(() => {
@@ -71,17 +75,14 @@ export default function ChatPage() {
   const { messages, status, error, sendMessage } = useChat({
     api: '/api/chat',
     id: chatId ?? undefined,
-    onFinish: async ({ message, messages: all }) => {
-      const last  = getText(message)
-      const users = all.filter(m => m.role === 'user')
-      const title = users.length > 0 ? getText(users[0]) : 'New Chat'
-      const stored = all.map(m => ({ id: m.id, role: m.role, text: getText(m) }))
-      if (currentUser?.id && chatIdRef.current) {
-        try {
-          await saveChat({ variables: { chatId: chatIdRef.current, userId: currentUser.id, title, lastMessage: last, messages: stored } })
-          window.dispatchEvent(new Event('chatHistoryUpdated'))
-        } catch (e) { console.error(e) }
-      }
+    body: {
+      resourceId: currentUser?.id || 'anonymous',
+    },
+    onFinish: async () => {
+      // Mastra Memory handles storing messages automatically
+      // Just notify sidebar to refresh the thread list
+      window.dispatchEvent(new Event('chatHistoryUpdated'))
+
       if (!hasRoutedRef.current && chatIdRef.current) {
         hasRoutedRef.current = true
         router.replace(`/chat/${chatIdRef.current}`)
@@ -96,7 +97,9 @@ export default function ChatPage() {
 
   const handleSend = () => {
     if (!inputValue.trim() || isLoading) return
-    sendMessage({ text: inputValue }); setInputValue('')
+    const userId = currentUserRef.current?.id || currentUser?.id || 'anonymous'
+    sendMessage({ text: inputValue }, { body: { resourceId: userId } })
+    setInputValue('')
   }
 
   const firstName = currentUser?.name?.split(' ')[0]

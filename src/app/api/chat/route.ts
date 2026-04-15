@@ -6,10 +6,11 @@ export const maxDuration = 30;
 
 export async function POST(req: Request) {
   try {
-    const { messages, id } = await req.json();
+    const { messages, id, resourceId } = await req.json();
 
-    // Filter + normalize to {role, content} format Mastra expects
-    const validMessages = (messages ?? [])
+    // When using Mastra Memory, we only need to send the LATEST user message
+    // Memory automatically loads conversation history from the thread
+    const allMessages = (messages ?? [])
       .filter((m: any) => m && m.role && (
         (Array.isArray(m.parts) && m.parts.length > 0) ||
         (typeof m.content === 'string' && m.content.trim().length > 0)
@@ -22,23 +23,29 @@ export async function POST(req: Request) {
       }))
       .filter((m: any) => m.content.trim().length > 0);
 
-    if (validMessages.length === 0) {
+    if (allMessages.length === 0) {
       return new Response(
         JSON.stringify({ error: 'No valid messages provided' }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
+    // Only send the last user message — Memory handles the rest
+    const lastMessage = allMessages[allMessages.length - 1];
+
     const agent = mastra.getAgent('eventManagementAgent');
 
-    const mastraStream = await agent.stream(validMessages, {
-      threadId: id,
+    // Use Mastra Memory to auto-store chat history
+    // thread = conversation ID, resource = user ID
+    const mastraStream = await agent.stream(lastMessage.content, {
+      memory: {
+        thread: id,
+        resource: resourceId || 'anonymous',
+      },
     });
 
-    // Per official Mastra docs: pass toAISdkStream() directly to createUIMessageStreamResponse
-    // toAISdkStream returns an async iterable — NOT an object with methods
     return createUIMessageStreamResponse({
-      stream: toAISdkStream(mastraStream, { from: 'agent' }),
+      stream: toAISdkStream(mastraStream, { from: 'agent' }) as any,
     });
 
   } catch (error) {

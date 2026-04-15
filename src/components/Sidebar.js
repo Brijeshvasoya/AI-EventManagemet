@@ -1,10 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { Plus, MessageSquare, Search, Trash2, Calendar, ChevronLeft, ChevronRight, Clock, Sparkles } from 'lucide-react'
-import { useQuery, useMutation } from '@apollo/client/react'
-import { GET_CHAT_HISTORY, DELETE_CHAT_MUTATION } from '../graphql/client'
 
 function formatTime(date) {
   const now = new Date()
@@ -24,7 +22,7 @@ function groupByTime(chats) {
   const week = new Date(today); week.setDate(week.getDate() - 7)
   const groups = { Today: [], Yesterday: [], 'This Week': [], Older: [] }
   chats?.forEach(c => {
-    const d = new Date(c.timestamp)
+    const d = new Date(c.updatedAt || c.createdAt)
     if (d >= today) groups.Today.push(c)
     else if (d >= yesterday) groups.Yesterday.push(c)
     else if (d >= week) groups['This Week'].push(c)
@@ -38,6 +36,7 @@ export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false)
   const [toDelete, setToDelete] = useState(null)
   const [user, setUser] = useState(null)
+  const [threads, setThreads] = useState([])
   const router = useRouter()
   const pathname = usePathname()
 
@@ -51,31 +50,40 @@ export default function Sidebar() {
     return () => window.removeEventListener('resize', check)
   }, [])
 
-  const { data, refetch } = useQuery(GET_CHAT_HISTORY, {
-    variables: { userId: user?.id }, skip: !user?.id, fetchPolicy: 'network-only',
-  })
-  const [deleteChat] = useMutation(DELETE_CHAT_MUTATION)
+  // Fetch threads from Mastra Memory API
+  const fetchThreads = useCallback(async () => {
+    if (!user?.id) return
+    try {
+      const res = await fetch(`/api/chat/threads?resourceId=${user.id}`)
+      if (res.ok) {
+        const data = await res.json()
+        setThreads(data.threads || [])
+      }
+    } catch (e) {
+      console.error('Failed to fetch threads:', e)
+    }
+  }, [user?.id])
 
+  // Initial fetch & refetch on route change
+  useEffect(() => { fetchThreads() }, [fetchThreads, pathname])
+
+  // Listen for chatHistoryUpdated event to refetch
   useEffect(() => {
-    const fn = () => refetch()
+    const fn = () => fetchThreads()
     window.addEventListener('chatHistoryUpdated', fn)
     return () => window.removeEventListener('chatHistoryUpdated', fn)
-  }, [refetch])
+  }, [fetchThreads])
 
-  useEffect(() => { if (user?.id) refetch() }, [pathname, user, refetch])
-
-  const all = data?.getChatHistory || []
-  const filtered = all.filter(c =>
-    c?.title?.toLowerCase().includes(search.toLowerCase()) ||
-    c?.lastMessage?.toLowerCase().includes(search.toLowerCase())
+  const filtered = threads.filter(c =>
+    c?.title?.toLowerCase().includes(search.toLowerCase())
   )
   const grouped = groupByTime(filtered)
 
   const confirmDelete = async () => {
     if (!toDelete || !user?.id) return
     try {
-      await deleteChat({ variables: { chatId: toDelete, userId: user.id } })
-      refetch()
+      await fetch(`/api/chat/threads/${toDelete}?resourceId=${user.id}`, { method: 'DELETE' })
+      fetchThreads()
       if (pathname === `/chat/${toDelete}`) router.push('/chat')
     } catch (e) { console.error(e) }
     finally { setToDelete(null) }
@@ -199,12 +207,9 @@ export default function Sidebar() {
                                 <p className={`text-xs font-semibold truncate leading-snug ${isActive(chat.id) ? 'text-white' : 'text-gray-300 group-hover:text-white'}`}>
                                   {chat.title}
                                 </p>
-                                {chat.lastMessage && (
-                                  <p className="text-[11px] truncate mt-0.5 leading-tight" style={{ color: 'rgba(156, 163, 175, 0.7)' }}>{chat.lastMessage}</p>
-                                )}
                                 <div className="flex items-center gap-1 mt-1">
                                   <Clock className="w-2.5 h-2.5" style={{ color: 'rgba(156,163,175,0.4)' }} />
-                                  <span className="text-[10px]" style={{ color: 'rgba(156,163,175,0.45)' }}>{formatTime(chat.timestamp)}</span>
+                                  <span className="text-[10px]" style={{ color: 'rgba(156,163,175,0.45)' }}>{formatTime(chat.updatedAt || chat.createdAt)}</span>
                                 </div>
                               </div>
                             </div>
@@ -225,7 +230,7 @@ export default function Sidebar() {
           ) : (
             /* Collapsed icon list */
             <div className="px-2 space-y-1">
-              {all.slice(0, 10).map(chat => (
+              {threads.slice(0, 10).map(chat => (
                 <button key={chat.id} onClick={() => router.push(`/chat/${chat.id}`)} title={chat.title}
                   className={`w-full p-2.5 rounded-xl flex items-center justify-center transition-all ${isActive(chat.id) ? 'gradient-primary' : 'text-gray-600 hover:text-violet-400 hover:bg-violet-500/10'}`}>
                   <MessageSquare className="w-4 h-4" />

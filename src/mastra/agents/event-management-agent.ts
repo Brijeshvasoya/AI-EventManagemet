@@ -1,5 +1,6 @@
 import { Agent } from '@mastra/core/agent';
 import { Memory } from '@mastra/memory';
+import { MongoDBStore } from '@mastra/mongodb';
 import { eventPlanningTool } from '../tools/event-planning-tool';
 import { venueManagementTool } from '../tools/venue-management-tool';
 import { guestManagementTool } from '../tools/guest-management-tool';
@@ -87,5 +88,15 @@ export const eventManagementAgent = new Agent({
     vendorCoordinationTool,
   },
 
-  memory: new Memory(),
+  memory: new Memory({
+    storage: new MongoDBStore({
+      id: 'memory-storage',
+      uri: process.env.DB_URL!,
+      dbName: 'ai-event-chat-memory',
+    }),
+    options: {
+      lastMessages: 40,
+      generateTitle: true,
+    },
+  }),
 });
