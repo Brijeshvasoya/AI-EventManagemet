@@ -27,7 +27,7 @@ export default function ChatInput({
       style={{
         background: 'var(--t-chatinput-grad)',
       }}>
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         {/* Input container */}
         <div className="relative flex items-end gap-2 p-2 rounded-2xl transition-all duration-300"
           style={{

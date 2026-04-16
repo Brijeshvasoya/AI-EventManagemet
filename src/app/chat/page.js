@@ -12,26 +12,60 @@ import ChatInput from '@/components/ChatInput'
 
 /* ── Markdown renderer ───────────────────────────────────── */
 const md = {
-  h1: ({ children }) => <h1 className="text-lg font-bold mt-4 mb-2" style={{ color: 'var(--t-md-h-color)' }}>{children}</h1>,
-  h2: ({ children }) => <h2 className="text-base font-bold mt-3 mb-1.5" style={{ color: 'var(--t-md-h-color)' }}>{children}</h2>,
-  h3: ({ children }) => <h3 className="text-sm font-semibold mt-3 mb-1" style={{ color: 'var(--t-md-h-color)' }}>{children}</h3>,
-  p:  ({ children }) => <p className="mb-2 last:mb-0 leading-relaxed text-sm" style={{ color: 'var(--t-md-p-color)' }}>{children}</p>,
-  strong: ({ children }) => <strong className="font-semibold" style={{ color: 'var(--t-md-strong-color)' }}>{children}</strong>,
-  em: ({ children }) => <em className="italic" style={{ color: 'var(--t-md-em-color)' }}>{children}</em>,
-  ul: ({ children }) => <ul className="list-disc pl-5 space-y-1 mb-2 text-sm" style={{ color: 'var(--t-md-list-color)' }}>{children}</ul>,
-  ol: ({ children }) => <ol className="list-decimal pl-5 space-y-1 mb-2 text-sm" style={{ color: 'var(--t-md-list-color)' }}>{children}</ol>,
-  li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+  h1: ({ children }) => <h1 className="text-3xl font-black mt-8 mb-4 tracking-tight leading-tight" style={{ color: 'var(--t-md-h-color)', fontFamily: 'Syne, sans-serif' }}>{children}</h1>,
+  h2: ({ children }) => <h2 className="text-2xl font-bold mt-7 mb-3 tracking-tight" style={{ color: 'var(--t-md-h-color)', fontFamily: 'Syne, sans-serif' }}>{children}</h2>,
+  h3: ({ children }) => <h3 className="text-xl font-semibold mt-6 mb-2 tracking-tight" style={{ color: 'var(--t-md-h-color)', fontFamily: 'Syne, sans-serif' }}>{children}</h3>,
+  p: ({ children }) => <p className="mb-4 last:mb-0 leading-relaxed text-base text-pretty" style={{ color: 'var(--t-md-p-color)' }}>{children}</p>,
+  strong: ({ children }) => <strong className="font-semibold px-1.5 py-0.5 rounded-md" style={{ color: 'var(--t-md-strong-color)', background: 'rgba(124,58,237,0.08)' }}>{children}</strong>,
+  em: ({ children }) => <em className="italic text-base" style={{ color: 'var(--t-md-em-color)' }}>{children}</em>,
+  ul: ({ children }) => <ul className="list-outside list-disc pl-5 space-y-2 mb-6 text-base marker:text-purple-500" style={{ color: 'var(--t-md-list-color)' }}>{children}</ul>,
+  ol: ({ children }) => <ol className="list-outside list-decimal pl-5 space-y-2 mb-6 text-base font-medium marker:text-cyan-500" style={{ color: 'var(--t-md-list-color)' }}>{children}</ol>,
+  li: ({ children }) => <li className="leading-relaxed pl-1" style={{ color: 'var(--t-md-list-color)' }}>{children}</li>,
   code: ({ inline, children }) => inline
-    ? <code className="px-1.5 py-0.5 rounded text-xs font-mono" style={{ background: 'var(--t-md-code-bg)', border: `1px solid var(--t-md-code-border)`, color: 'var(--t-md-code-text)' }}>{children}</code>
-    : <pre className="p-3.5 rounded-xl text-xs font-mono overflow-x-auto my-3" style={{ background: 'var(--t-md-pre-bg)', border: `1px solid var(--t-md-pre-border)` }}><code style={{ color: 'var(--t-md-pre-text)' }}>{children}</code></pre>,
-  blockquote: ({ children }) => <blockquote className="pl-3 my-2 text-sm italic" style={{ borderLeft: `2px solid var(--t-md-quote-border)`, background: 'var(--t-md-quote-bg)', padding: '8px 12px', borderRadius: '0 8px 8px 0', color: 'var(--t-md-quote-text)' }}>{children}</blockquote>,
-  hr: () => <hr className="my-3" style={{ borderColor: 'var(--t-md-hr)' }} />,
-  table: ({ children }) => <div className="overflow-x-auto my-3 rounded-xl" style={{ border: `1px solid var(--t-md-table-border)` }}><table className="min-w-full text-sm">{children}</table></div>,
-  thead: ({ children }) => <thead style={{ background: 'var(--t-md-thead-bg)' }}>{children}</thead>,
-  tbody: ({ children }) => <tbody style={{ background: 'var(--t-md-tbody-bg)' }}>{children}</tbody>,
-  tr: ({ children }) => <tr style={{ borderBottom: `1px solid var(--t-md-tr-border)` }}>{children}</tr>,
-  th: ({ children }) => <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--t-md-th-text)' }}>{children}</th>,
-  td: ({ children }) => <td className="px-4 py-2.5 text-xs" style={{ color: 'var(--t-md-td-text)' }}>{children}</td>,
+    ? <code className="px-1.5 py-0.5 rounded-md text-sm font-mono tracking-tight" style={{ background: 'var(--t-md-code-bg)', border: `1px solid var(--t-md-code-border)`, color: 'var(--t-md-code-text)' }}>{children}</code>
+    : <div className="group relative my-5 max-w-full">
+        <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-purple-500/15 to-cyan-500/15 opacity-0 group-hover:opacity-100 blur transition-opacity duration-300 pointer-events-none" />
+        <pre className="relative p-4 rounded-xl text-sm font-mono overflow-x-auto shadow-sm" style={{ background: 'var(--t-md-pre-bg)', border: `1px solid var(--t-md-pre-border)'` }}><code style={{ color: 'var(--t-md-pre-text)' }}>{children}</code></pre>
+      </div>,
+  blockquote: ({ children }) => (
+    <div className="my-6 relative">
+      <div className="absolute left-0 top-0 bottom-0 w-1 rounded-r-full bg-gradient-to-b from-purple-500 to-cyan-500" />
+      <blockquote className="pl-6 py-2 text-base italic leading-relaxed" style={{ background: 'var(--t-md-quote-bg)', borderRadius: '0 12px 12px 0', color: 'var(--t-md-quote-text)' }}>
+        {children}
+      </blockquote>
+    </div>
+  ),
+  hr: () => <hr className="my-6 border-t-2" style={{ borderColor: 'var(--t-md-hr)' }} />,
+  table: ({ children }) => (
+    <div className="overflow-x-auto my-8 rounded-2xl shadow-sm border border-black/5 dark:border-white/10" style={{ background: 'var(--t-md-tbody-bg)' }}>
+      <table className="w-full text-left border-collapse text-sm">{children}</table>
+    </div>
+  ),
+  thead: ({ children }) => (
+    <thead style={{ background: 'var(--t-md-thead-bg)' }}>
+      {children}
+    </thead>
+  ),
+  tbody: ({ children }) => (
+    <tbody className="divide-y" style={{ borderColor: 'var(--t-md-tr-border)' }}>
+      {children}
+    </tbody>
+  ),
+  tr: ({ children }) => (
+    <tr className="transition-colors hover:bg-black/[0.02] dark:hover:bg-white/[0.02] group">
+      {children}
+    </tr>
+  ),
+  th: ({ children }) => (
+    <th className="px-6 py-4 font-bold text-xs uppercase tracking-widest whitespace-nowrap" style={{ color: 'var(--t-md-th-text)', borderBottom: `2px solid var(--t-md-tr-border)` }}>
+      {children}
+    </th>
+  ),
+  td: ({ children }) => (
+    <td className="px-6 py-4 leading-relaxed" style={{ color: 'var(--t-md-td-text)' }}>
+      {children}
+    </td>
+  ),
 }
 
 function getText(msg) {

@@ -50,7 +50,7 @@ export default function LoginPage() {
         animation: 'fadeSlideUp 0.8s ease-out',
       }} />
 
-      <div className="relative z-10 w-full max-w-6xl mx-auto px-6 lg:px-8 py-10 flex items-center gap-12 lg:gap-20 animate-fade-slide-up">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-8 py-10 flex items-center gap-12 lg:gap-20 animate-fade-slide-up">
 
         {/* ══ LEFT PANEL ══════════════════════════════ */}
         <div className="hidden lg:flex flex-col flex-1 gap-8">
@@ -75,7 +75,7 @@ export default function LoginPage() {
               <Star className="w-3 h-3" />
               Trusted by 10,000+ event planners
             </div>
-            <h1 className="text-5xl xl:text-6xl font-black leading-[1.08] tracking-tight" style={{ fontFamily: 'Syne, sans-serif' }}>
+            <h1 className="text-5xl xl:text-6xl font-black leading-[1.08] tracking-tight gradient-text-warm" style={{ fontFamily: 'Syne, sans-serif' }}>
               <span style={{ color: 'var(--t-text-primary)' }}>Plan events</span><br />
               <span className="shimmer-text">smarter</span>
               <span style={{ color: 'var(--t-text-primary)' }}>, faster</span>
@@ -213,7 +213,7 @@ export default function LoginPage() {
                 <button
                   id="login-submit"
                   type="submit" disabled={loading}
-                className="btn-primary w-full py-4 rounded-2xl p-4 text-sm flex items-center justify-center gap-2.5 mt-2 animate-breathe-glow"
+                  className="btn-primary w-full py-4 rounded-2xl p-4 text-sm flex items-center justify-center gap-2.5 mt-2 animate-breathe-glow"
                 >
                   {loading ? (
                     <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full" style={{ animation: 'spin 0.8s linear infinite' }} /> Signing in…</>

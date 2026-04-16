@@ -58,7 +58,7 @@ export default function SignupPage() {
         animation: 'fadeSlideUp 0.8s ease-out',
       }} />
 
-      <div className="relative z-10 w-full max-w-6xl mx-auto px-6 lg:px-8 py-8 flex items-center gap-12 lg:gap-20 animate-fade-slide-up">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-8 py-8 flex items-center gap-12 lg:gap-20 animate-fade-slide-up">
 
         {/* ══ LEFT PANEL ═══════════════════════════ */}
         <div className="hidden lg:flex flex-col flex-1 gap-7">
@@ -77,9 +77,9 @@ export default function SignupPage() {
           {/* Headline */}
           <div className="animate-fade-up delay-1">
             <div className="badge mb-4"><Sparkles className="w-3 h-3" /> Free forever plan available</div>
-            <h1 className="text-5xl xl:text-6xl font-black leading-[1.08] tracking-tight" style={{ fontFamily: 'Syne, sans-serif' }}>
+            <h1 className="text-5xl xl:text-6xl font-black leading-[1.08] tracking-tight gradient-text-warm" style={{ fontFamily: 'Syne, sans-serif' }}>
               <span style={{ color: 'var(--t-text-primary)' }}>Start planning</span><br />
-              <span className="gradient-text-warm">amazing</span>
+              <span className="shimmer-text">amazing</span>
               <span style={{ color: 'var(--t-text-primary)' }}> events</span>
             </h1>
             <p className="mt-4 text-lg leading-relaxed max-w-sm" style={{ color: 'var(--t-text-tertiary)' }}>
