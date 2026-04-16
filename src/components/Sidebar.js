@@ -273,7 +273,7 @@ export default function Sidebar() {
       {/* ── DELETE MODAL ────────────────────────────── */}
       {toDelete && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
-          style={{ background: 'var(--t-delete-modal-overlay)', backdropFilter: 'blur(12px)' }}>
+          style={{ background: 'var(--t-delete-modal-overlay)' }}>
           <div className="w-full max-w-sm rounded-2xl p-6 animate-scale-in"
             style={{ background: 'var(--t-delete-modal-bg)', border: `1px solid var(--t-delete-modal-border)`, boxShadow: `0 24px 80px var(--t-delete-modal-shadow)` }}>
             <div className="flex items-center gap-3 mb-3">
