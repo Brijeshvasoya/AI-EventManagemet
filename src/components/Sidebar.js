@@ -45,7 +45,7 @@ export default function Sidebar() {
   }, [])
 
   useEffect(() => {
-    const check = () => setCollapsed(window.innerWidth < 768)
+    const check = () => setCollapsed(window.innerWidth <= 768)
     check(); window.addEventListener('resize', check)
     return () => window.removeEventListener('resize', check)
   }, [])
