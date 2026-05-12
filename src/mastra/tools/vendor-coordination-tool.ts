@@ -48,9 +48,9 @@ export const vendorCoordinationTool = createTool({
   execute: async ({ action, eventType, budget, location, requirements }) => {
     switch (action) {
       case 'find-vendors':
-        return findVendors(eventType, budget, location, requirements);
+        return findVendors(eventType, budget || 0, location || 'Online', requirements || []);
       case 'coordinate-vendors':
-        return coordinateVendors(eventType, budget);
+        return coordinateVendors(eventType, budget || 0);
       case 'track-vendors':
         return trackVendors();
       case 'evaluate-vendors':
@@ -69,13 +69,13 @@ function findVendors(eventType: string, budget: number, location: string, requir
     conference: ['Venue', 'Caterer', 'AV Equipment', 'Registration Services', 'Transportation', 'Speakers'],
   };
 
-  const vendors = [];
+  const vendors: any[] = [];
   const categories = vendorCategories[eventType as keyof typeof vendorCategories] || vendorCategories.corporate;
 
   categories.forEach(category => {
     // Generate 2-3 vendors per category
     const vendorCount = Math.floor(Math.random() * 2) + 2;
-    
+
     for (let i = 0; i < vendorCount; i++) {
       vendors.push(generateVendor(category, location, budget));
     }
@@ -92,7 +92,7 @@ function findVendors(eventType: string, budget: number, location: string, requir
 function generateVendor(category: string, location: string, budget: number) {
   const basePrice = budget * 0.15; // Average 15% of total budget per vendor
   const priceVariation = (Math.random() - 0.5) * 0.4; // ±20% variation
-  
+
   const vendorServices: Record<string, string[]> = {
     'Caterer': ['Full-service catering', 'Buffet service', 'Plated dinners', 'Cocktail service'],
     'Photographer': ['Event photography', 'Video coverage', 'Drone photography', 'Photo albums'],
@@ -220,7 +220,7 @@ function generateEvaluationCriteria(eventType: string) {
   };
 
   const selectedCriteria = criteria[eventType as keyof typeof criteria] || criteria.corporate;
-  
+
   return {
     questions: [
       'How long have you been in business?',
@@ -310,7 +310,7 @@ function trackVendors() {
 
 function evaluateVendors(eventType: string) {
   const sevenDaysFromNow = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
-  
+
   return {
     vendors: [],
     coordinationPlan: {

@@ -70,9 +70,8 @@ function generateBudgetBreakdown(totalBudget: number, eventType: string, guestCo
       venue: 0.25,
       catering: 0.35,
       beverages: 0.15,
-      avEquipment: 0.10,
       staff: 0.10,
-      miscellaneous: 0.05,
+      miscellaneous: 0.15,
     },
     birthday: {
       venue: 0.30,
@@ -84,30 +83,41 @@ function generateBudgetBreakdown(totalBudget: number, eventType: string, guestCo
     conference: {
       venue: 0.40,
       catering: 0.25,
-      avEquipment: 0.20,
       staff: 0.10,
-      miscellaneous: 0.05,
+      miscellaneous: 0.25,
     },
   };
 
   const eventAllocation = allocations[eventType] || allocations.corporate;
-  const contingency = totalBudget * 0.10; // 10% contingency
+  const contingency = Math.round(totalBudget * 0.10); // 10% contingency
 
-  const breakdown: Record<string, number> = {};
-  let allocatedTotal = 0;
+  // Initialize with all required fields set to 0
+  const breakdown = {
+    venue: 0,
+    catering: 0,
+    beverages: 0,
+    decoration: 0,
+    entertainment: 0,
+    photography: 0,
+    staff: 0,
+    contingency,
+    miscellaneous: 0,
+  };
 
-  // Apply allocations
-  Object.entries(eventAllocation).forEach(([category, percentage]) => {
-    breakdown[category] = Math.round(totalBudget * percentage);
-    allocatedTotal += breakdown[category];
-  });
+  let allocatedTotal = contingency;
 
-  // Add contingency
-  breakdown.contingency = Math.round(contingency);
+  // Apply allocations from the event template
+  for (const [key, percentage] of Object.entries(eventAllocation)) {
+    const amount = Math.round(totalBudget * percentage);
+    if (key in breakdown) {
+      (breakdown as any)[key] = amount;
+      allocatedTotal += amount;
+    }
+  }
 
-  // Calculate miscellaneous (remaining budget)
-  const totalAllocated = allocatedTotal + contingency;
-  breakdown.miscellaneous = Math.max(0, totalBudget - totalAllocated);
+  // Calculate miscellaneous (remaining budget) if not already explicitly set or to balance the total
+  const remaining = totalBudget - allocatedTotal;
+  breakdown.miscellaneous += Math.max(0, remaining);
 
   return breakdown;
 }

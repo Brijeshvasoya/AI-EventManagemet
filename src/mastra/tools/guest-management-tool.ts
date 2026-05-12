@@ -46,13 +46,13 @@ export const guestManagementTool = createTool({
   execute: async ({ action, guestCount, eventType, guestData }) => {
     switch (action) {
       case 'create-list':
-        return createGuestList(guestData || generateMockGuests(guestCount));
+        return createGuestList(guestData || generateMockGuests(guestCount || 10));
       case 'track-rsvp':
         return trackRSVP(guestData || []);
       case 'send-invitations':
         return sendInvitations(guestData || []);
       case 'manage-seating':
-        return manageSeating(guestData || [], eventType);
+        return manageSeating(guestData || [], eventType || 'wedding');
       default:
         throw new Error('Invalid action specified');
     }
